@@ -26,8 +26,8 @@ public class InserirNomeActivity extends Activity {
 	private TextView textJogador3;
 	private ArrayList<String> arrayJogadores; 
 	private ArrayList<Integer> pontosJogador;
-	private int indice;
-	
+	private ArrayList<Integer> listaRodadas;
+	private int indice = 0;
 	
 	//Metodo para ação do botão "OK"
 	public void botaoOk(View view){
@@ -45,6 +45,7 @@ public class InserirNomeActivity extends Activity {
 					intentOut.putStringArrayListExtra("arrayJogadores", arrayJogadores);
 					intentOut.putExtra("jogadorAtual", 0);
 					intentOut.putIntegerArrayListExtra("pontuacaoJogadores", pontosJogador);
+					intentOut.putIntegerArrayListExtra("listaRodadas", listaRodadas);
 					
 					super.finish();
 					//Vai para nova activity
@@ -53,11 +54,7 @@ public class InserirNomeActivity extends Activity {
 	}
 	
 	public void botaoCancelar(View view){	
-				Intent intent = new Intent(this, ControllerActivity.class);
-				intent.putExtra("botao", "botaoCancelarInserirNome");
-				
-				super.finish();
-				startActivity(intent);
+				onBackPressed();
 	}
 	
 	//Apenas verifica se os EditTexts foram preenchidos, caso contrario retorna falso.
@@ -90,13 +87,15 @@ public class InserirNomeActivity extends Activity {
 		}
 		
 	}
-	
 	private void populaPontos(int index){
 		pontosJogador = new ArrayList<Integer>();
+		listaRodadas = new ArrayList<Integer>();
 		for(int i = 0; i<index; i++){
 			pontosJogador.add(i, 45);
+			listaRodadas.add(i, 0);
 		}
 	}
+	
 	 
 	//Cria a lista de Jogadores para a proxima activity montar a lista na view.
 	private void addJogadores(){
@@ -129,7 +128,9 @@ public class InserirNomeActivity extends Activity {
 	}
 	
 	//Dependendo a quantidade de jogadores escolhidos, alguns campos ficam invisiveis.
-	private void setQuantidadeDeCamposDeTextos(int indice){
+	private void setQuantidadeDeCamposDeTextos(){
+		indice = intentDados.getIntExtra("numeroDeJogadores", 1);
+		
 		if(indice == 1){
 			editJogador1.setVisibility(View.VISIBLE);
 			textJogador1.setVisibility(View.VISIBLE);
@@ -150,44 +151,6 @@ public class InserirNomeActivity extends Activity {
 		}
 	}
 	
-	private void dialogo(){
-		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
-		dialogo.setTitle("Inserir numero de jogadores");
-		dialogo.setMessage("Inserir de 1 à 3");
-		
-		final EditText inserirNumero = new EditText(this);
-    	dialogo.setView(inserirNumero);
-    	
-    	dialogo.setPositiveButton("OK", new OnClickListener() {	
-			@Override
-			public void onClick(DialogInterface dialogo, int qualBotao) {
-				try{
-					indice = Integer.parseInt(inserirNumero.getText().toString());
-					if(indice == 1 || indice == 2 || indice ==3){
-						setQuantidadeDeCamposDeTextos(indice);
-					}
-					else
-						dialogo();
-				}catch (NumberFormatException e) {
-						dialogo();
-				}
-			}
-		});
-    	
-    	//Cria um botão negativo. Por padrão, apenas facha o dialogo.
-    	/*dialogo.setNegativeButton("Cancel", new OnClickListener() {		
-			@Override
-			public void onClick(DialogInterface dialogo, int qualBotao) {	
-				intentNovaPagina = new Intent(InserirNomeActivity.this, ControllerActivity.class);
-				intentNovaPagina.putExtra("botao", "botaoCancelarDialogo");
-				
-				startActivity(intentNovaPagina);
-			}
-		});*/
-    	
-    	dialogo.show();
-	}
-	
 	//Para o Android, essa eh a classe main.
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -196,7 +159,7 @@ public class InserirNomeActivity extends Activity {
         setContentView(R.layout.inserir_nomes);
         instanciarObjetos();
         setNovaIntent();
-        dialogo();
+        setQuantidadeDeCamposDeTextos();
     }
 }
 

@@ -15,21 +15,18 @@ public class SobreActivity extends Activity{
 	public void botaoCredito(View view){
 		Intent intent = new Intent(this, ControllerActivity.class);
 		intent.putExtra("botao", "botaoCredito");
-		super.finish();
 		startActivity(intent);
 	}
 	
 	public void botaoHistoria(View view){
 		Intent intent = new Intent(this, ControllerActivity.class);
 		intent.putExtra("botao", "botaoHistoria");
-		super.finish();
 		startActivity(intent);
 	}
 	
 	public void botaoComoJogar(View view){
 		Intent intent = new Intent(this, ControllerActivity.class);
 		intent.putExtra("botao", "botaoComoJogar");
-		super.finish();
 		startActivity(intent);
 	}
 }

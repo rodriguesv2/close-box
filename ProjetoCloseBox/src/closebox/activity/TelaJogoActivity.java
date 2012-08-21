@@ -12,10 +12,12 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TelaJogoActivity extends Activity{
 	private TextView jogador1;
@@ -64,10 +66,12 @@ public class TelaJogoActivity extends Activity{
 	private ImageView placaDown9;
 	private ImageView dadoLancado1;
 	private ImageView dadoLancado2;
+	private boolean placa7abaixada = false;
+	private boolean placa8abaixada = false;
+	private boolean placa9abaixada = false;
 	//private Intent intentIn;
 	private Intent intentOut;
 	private int qtdePlacas = 9;
-	private int placasSeteOitoNove;
 	//private boolean jogar1dado = false;
 	private ArrayList<String> listaJogadores;
 	private ArrayList<Integer> listaPontuacao;
@@ -75,6 +79,31 @@ public class TelaJogoActivity extends Activity{
 	private int jogadorAtual;
 	private int pontosRestantes = 45;
 	private TextView apontador;
+	private boolean ehUmDado = false;
+	private boolean jahFoiPerguntadoSobreDados = false;
+	private TextView qualSomaDasPlacas;
+	private EditText campoSomaPlacas;
+	private Button okSomaPlacas;
+	private TextView rodadaAtual;
+	private ArrayList<Integer> listaRodadas;
+	private int rodada;
+	private boolean calcularPontos = false;
+	private boolean jahDesistiu = false;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.tela_jogo);
+		
+		threadDado1();
+		threadDado2();
+		handler = new Handler();
+		dadosIntent = getIntent();
+		instanciarObjetos();
+		mostrarJogadores();
+		dadoLancado1.setVisibility(View.INVISIBLE);
+		dadoLancado2.setVisibility(View.INVISIBLE);
+	}
 	
 	//Mostra apenas as TextViews com conteudo.
 	private void mostrarJogadores(){
@@ -84,6 +113,11 @@ public class TelaJogoActivity extends Activity{
 		listaPontuacao = dadosIntent.getIntegerArrayListExtra("pontuacaoJogadores");
 		jogadorAtual = dadosIntent.getIntExtra("jogadorAtual", 0);
 		pontuacao = listaPontuacao.get(jogadorAtual);
+		listaRodadas = dadosIntent.getIntegerArrayListExtra("listaRodadas");
+		rodada = listaRodadas.get(jogadorAtual);
+		
+		Toast toast = Toast.makeText(getBaseContext(), "Agora é a vez de "+ listaJogadores.get(jogadorAtual), Toast.LENGTH_SHORT);
+		toast.show();
 		
 		if(qtdeJogadores == 1){
 			jogador2.setVisibility(View.INVISIBLE);
@@ -113,6 +147,7 @@ public class TelaJogoActivity extends Activity{
 			jogador3.setText(listaJogadores.get(2)+"  ");
 			pontos3.setText(listaPontuacao.get(2)+"");
 		}
+		rodadaAtual.setText(rodada+"");
 		apontaJogador(jogadorAtual);
 	}
 	
@@ -146,8 +181,13 @@ public class TelaJogoActivity extends Activity{
 		placaDown9 = (ImageView)findViewById(R.id.imageViewPD9);
 		dadoLancado1 = (ImageView)findViewById(R.id.imageViewDadoLancado1);
 		dadoLancado2 = (ImageView)findViewById(R.id.imageViewDadoLancado2);
+		qualSomaDasPlacas = (TextView)findViewById(R.id.textView1);
+		campoSomaPlacas = (EditText)findViewById(R.id.campo_pontos_de_vida);
+		okSomaPlacas = (Button)findViewById(R.id.okSomaPlacas);
+		rodadaAtual = (TextView)findViewById(R.id.rodada);
 	}
 	
+	//Adiciona um # a frente do nome da rodada.
 	public void apontaJogador(int jogador){
 		if(jogador == 0){
 			apontador = (TextView)findViewById(R.id.checkedTextView1);
@@ -161,8 +201,8 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
+	//Faz o dado 1 girar.
 	public void threadDado1() {
-		// Do something long
 		runnable1 = new Runnable() {
 			int i = 2;
 			@Override
@@ -194,6 +234,7 @@ public class TelaJogoActivity extends Activity{
 		dado1Parado = false;
 	}
 	
+	//Faz o dado 2 girar.
 	public void threadDado2() {
 		// Do something long
 		runnable2 = new Runnable() {
@@ -228,18 +269,26 @@ public class TelaJogoActivity extends Activity{
 		dado2Parado = false;
 	}
 	
+	//O real valor que o dado recebe.
 	public int sorteio(){
-		int posicao = (int) Math.ceil((Math.random()*6));
-		return posicao;
+		int sorteio = (int)Math.ceil((Math.random()*6));	
+		return sorteio;
 	}
 	
+	//Faz com que os dados voltem a posição de jogar.
 	public void escondeDadoLancado(){
-		dadoLancado1.setVisibility(View.INVISIBLE);
-		dadoLancado2.setVisibility(View.INVISIBLE);
-		dado1.setVisibility(View.VISIBLE);
-		dado2.setVisibility(View.VISIBLE);
+		if(!ehUmDado){
+			dadoLancado1.setVisibility(View.INVISIBLE);
+			dadoLancado2.setVisibility(View.INVISIBLE);
+			dado1.setVisibility(View.VISIBLE);
+			dado2.setVisibility(View.VISIBLE);
+		}else{
+			dadoLancado1.setVisibility(View.INVISIBLE);
+			dado1.setVisibility(View.VISIBLE);
+		}
 	}
 	
+	//Faz com que o dado 1 seja jogado.
 	public void acaoDado1(View view){
 		dado1.setVisibility(View.INVISIBLE);
 		girar = false;
@@ -247,14 +296,14 @@ public class TelaJogoActivity extends Activity{
 		sortearDado1();
 	}
 	
+	//Faz com que o numero sorteado corresponda a imagem do dado.
 	public void sortearDado1(){
 		valorDado1=sorteio();
 		dadoLancado1.setImageResource(listaDados[valorDado1-1]);
-		//pontos1.setText(listaPontuacao.get(0)+"");
 		dadoLancado1.setVisibility(View.VISIBLE);
-		//pontos2.setText(listaPontuacao.get(1)+"");
 	}
 	
+	//Faz com que o dado 2 seja jogado.
 	public void acaoDado2(View view){
 		dado2.setVisibility(View.INVISIBLE);
 		girar2 = false;
@@ -262,36 +311,24 @@ public class TelaJogoActivity extends Activity{
 		sortearDado2();
 	}
 	
+	//Faz com que o numero sorteado corresponda a imagem do dado.
 	public void sortearDado2(){
 		valorDado2=sorteio();
 		dadoLancado2.setImageResource(listaDados[valorDado2-1]);
 		dadoLancado2.setVisibility(View.VISIBLE);
 	}
 	
-	//Metodo main para o Android
-	@Override
-	public void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-		//Faz uma nova xml subir a frente
-		setContentView(R.layout.tela_jogo);
-		
-		threadDado1();
-		threadDado2();
-		handler = new Handler();
-		dadosIntent = getIntent();
-		instanciarObjetos();
-		mostrarJogadores();
-		dadoLancado1.setVisibility(View.INVISIBLE);
-		dadoLancado2.setVisibility(View.INVISIBLE);
-		
-	
+	public void inutilizarDado2(){
+		dado2.setVisibility(View.INVISIBLE);
 	}
 	
 	//-------------------------------------------------------------------------------------------------------------//
 	//caso de uso abaixar placas
 	
+	
+	
 	public void abaixarPlaca1(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa1.setVisibility(View.INVISIBLE);
 			placaDown1.setVisibility(View.VISIBLE);
 			calculaJogada(1);
@@ -299,7 +336,7 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	public void abaixarPlaca2(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa2.setVisibility(View.INVISIBLE);
 			placaDown2.setVisibility(View.VISIBLE);
 			calculaJogada(2);
@@ -307,7 +344,7 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	public void abaixarPlaca3(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa3.setVisibility(View.INVISIBLE);
 			placaDown3.setVisibility(View.VISIBLE);
 			calculaJogada(3);
@@ -315,7 +352,7 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	public void abaixarPlaca4(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa4.setVisibility(View.INVISIBLE);
 			placaDown4.setVisibility(View.VISIBLE);
 			calculaJogada(4);
@@ -323,7 +360,7 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	public void abaixarPlaca5(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa5.setVisibility(View.INVISIBLE);
 			placaDown5.setVisibility(View.VISIBLE);
 			calculaJogada(5);
@@ -331,7 +368,7 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	public void abaixarPlaca6(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa6.setVisibility(View.INVISIBLE);
 			placaDown6.setVisibility(View.VISIBLE);
 			calculaJogada(6);
@@ -339,39 +376,50 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	public void abaixarPlaca7(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa7.setVisibility(View.INVISIBLE);
 			placaDown7.setVisibility(View.VISIBLE);
+			placa7abaixada = true;
 			calculaJogada(7);
 		}
 	}
 	
 	public void abaixarPlaca8(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa8.setVisibility(View.INVISIBLE);
 			placaDown8.setVisibility(View.VISIBLE);
+			placa8abaixada = true;
 			calculaJogada(8);
 		}
 	}
 	
 	public void abaixarPlaca9(View view){
-		if(dado1Parado && dado2Parado){
+		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
 			placa9.setVisibility(View.INVISIBLE);
 			placaDown9.setVisibility(View.VISIBLE);
+			placa9abaixada = true;
 			calculaJogada(9);
 		}
 	}
 	
+	
+	/*Calcula a soma dos dados e valida a ação levando em conta se uma ou duas
+	 * placas foram abaixadas.
+	 */
 	public void calculaJogada(int placa){
-		somaDados = valorDado1 + valorDado2;
+		if(!ehUmDado)somaDados = valorDado1 + valorDado2;
+		else					  somaDados = valorDado1;
 		
 		if(primeiraPlaca){
 			if(placa==somaDados){
 				qtdePlacas --;
 				pontosRestantes -= placa;
+				rodada +=10;
+				rodadaAtual.setText(rodada+"");
 				threadDado1();
 				threadDado2();
 				escondeDadoLancado();
+				subirDialogoSobreDados();
 			}else{
 				primeiraPlaca = false;
 				diferenca = somaDados - placa;
@@ -382,20 +430,25 @@ public class TelaJogoActivity extends Activity{
 				qtdePlacas = qtdePlacas -2;
 				pontosRestantes -= (placa+placaAnterior);
 				primeiraPlaca =true;
+				rodada +=5;
+				rodadaAtual.setText(rodada+"");
 				threadDado1();
 				threadDado2();
 				escondeDadoLancado();
+				subirDialogoSobreDados();
 			}else{
 				levantar2Placas(placa, placaAnterior);
 			}
 		}
-		if(qtdePlacas ==0){
+		if(qtdePlacas == 0){
+			rodada +=30;
 			girar = false;
 			girar2 = false;
 			calculaPontosRestantes();
 		}
 	}
 
+	//Levanta as 2 placas.
 	private void levantar2Placas(int placa, int placaAnterior) {
 		levantarPlaca(placa);
 		levantarPlaca(placaAnterior);
@@ -407,6 +460,7 @@ public class TelaJogoActivity extends Activity{
 		mensagemJogadaErrada(placa, placaAnterior);
 	}
 
+	//Levanta uma placa.
 	private void levantarPlaca(int placa) {
 		switch (placa) {
 		case 1:
@@ -442,16 +496,19 @@ public class TelaJogoActivity extends Activity{
 		case 7:
 			placa7.setVisibility(View.VISIBLE);
 			placaDown7.setVisibility(View.INVISIBLE);
+			placa7abaixada = false;
 			break;
 			
 		case 8:
 			placa8.setVisibility(View.VISIBLE);
 			placaDown8.setVisibility(View.INVISIBLE);
+			placa8abaixada = false;
 			break;
 			
 		case 9:
 			placa9.setVisibility(View.VISIBLE);
 			placaDown9.setVisibility(View.INVISIBLE);
+			placa9abaixada = false;
 			break;
 
 		default:
@@ -459,19 +516,42 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	public void determinarQtdeDados(int placaAtual, int placa_anterior){
-		if(placaAtual>6){
-			placasSeteOitoNove=-placaAtual;
-		}else{} 
-		if(placa_anterior>6){
-			placasSeteOitoNove=-placa_anterior;
-		}else{}
-		
-		if(placasSeteOitoNove==0){
-			//jogar1dado = true;
+	public boolean placasAltasAbaixadas(){
+		if(placa7abaixada && placa8abaixada && placa9abaixada) return true;
+		else												   return false;
+	}
+	
+	//Verifica se já foi perguntado se deseja jogar com apenas 1 dado.
+	public void subirDialogoSobreDados(){
+		if(placasAltasAbaixadas() && !jahFoiPerguntadoSobreDados){
+			determinarQuantidadeDeDados();
+			jahFoiPerguntadoSobreDados = true;
 		}
 	}
 	
+	//Detemina se deve haver dois dados.
+	public void determinarQuantidadeDeDados(){
+		if(placasAltasAbaixadas()){
+			AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+			dialogo.setTitle("Sugestão");
+			dialogo.setMessage("As placas 7, 8 e 9 foram abaixadas.\n Deseja jogar " +
+					"com 1 dado?");
+			
+			dialogo.setPositiveButton("Sim", new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					ehUmDado = true;
+					inutilizarDado2();
+				}
+			});
+			dialogo.setNegativeButton("Não", null);
+			dialogo.show();
+			
+		}
+	}
+	
+	//Despara uma mensagem dizendo que a jogada é invalida.
 	private void mensagemJogadaErrada(int placa1, int placa2){
 		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 		dialogo.setTitle("JOGADA ERRADA");
@@ -490,56 +570,52 @@ public class TelaJogoActivity extends Activity{
     	dialogo.show();
 	}
 	
+	//Exibe caixa de dialogo para o caso do jogador não conseguir mais jogar.
 	public void desistir(View view){
-		
-		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
-		dialogo.setTitle("NÃO É POSSÍVEL PROSSEGUIR!");
-		dialogo.setMessage("Tem certeza que não há jogadas possíveis?");
-		
-		dialogo.setPositiveButton("CONFIRMAR", new OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				calculaPontosRestantes();
-			}
-		});
-		
-		dialogo.setNegativeButton("TENTAR NOVAMENTE", new OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				try {
-					this.finalize();
-				} catch (Throwable e) {
-					e.printStackTrace();
+		if(!jahDesistiu){
+			jahDesistiu = true;
+			AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+			dialogo.setTitle("NÃO É POSSÍVEL PROSSEGUIR!");
+			dialogo.setMessage("Tem certeza que não há jogadas possíveis?");
+
+			dialogo.setPositiveButton("CONFIRMAR", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					mostrarCalcularPontos();
 				}
-			}
-		});
-		dialogo.show();
+			});
+
+			dialogo.setNegativeButton("TENTAR NOVAMENTE", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					try {
+						this.finalize();
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			dialogo.show();
+		}
 	}
 	
 	public void calculaPontosRestantes(){//No Sprint apropriado será implementado corretamente.
+		// inserir ou enviar para o Activity CALCULAR PONTOS DE VIDA
 		
-		if((pontuacao - pontosRestantes)<1){
-			listaJogadores.remove(jogadorAtual);
-			listaPontuacao.remove(jogadorAtual);
-			qtdeJogadores--;
-		}else{
-			listaPontuacao.set(jogadorAtual, pontuacao - pontosRestantes);
-		}
+		intentOut = new Intent(this, ControllerActivity.class);
 		
-		if(qtdeJogadores>0){
-			if(jogadorAtual<qtdeJogadores -1){
-				jogadorAtual++;
-			}else{
-				jogadorAtual = 0;
-			}
-			novaRodada();
-		}else{
-			gameOver();
-		}
-		
-
+		intentOut.putExtra("botao", "calcularPontosDeVida");
+		intentOut.putExtra("numeroDeJogadores", qtdeJogadores);//quantidade de jogadores (int)
+		intentOut.putStringArrayListExtra("arrayJogadores", listaJogadores);//lista de nomes dos jogadores (String)
+		intentOut.putIntegerArrayListExtra("pontuacaoJogadores", listaPontuacao);//lista de pontuacao (int)
+		intentOut.putExtra("jogadorAtual", jogadorAtual);// o jogador atual (int)
+		intentOut.putExtra("pontosRodada", pontosRestantes);// a soma das placas nao abaixadas (int)
+		listaRodadas.set(jogadorAtual, rodada);
+		intentOut.putIntegerArrayListExtra("listaRodadas", listaRodadas);//lista das rodadas (int)
+		super.finish();
+		startActivity(intentOut);
 	}
 	
 	@Override
@@ -561,16 +637,39 @@ public class TelaJogoActivity extends Activity{
 		dialogo.show();
 	}
 	
-	public void novaRodada(){
-		intentOut = new Intent(this, ControllerActivity.class);
+	public void mostrarCalcularPontos(){
+		campoSomaPlacas.setVisibility(View.VISIBLE);
+		qualSomaDasPlacas.setVisibility(View.VISIBLE);
+		okSomaPlacas.setVisibility(View.VISIBLE);
+		calcularPontos = true;
+		dado1.setVisibility(View.INVISIBLE);
+		dado2.setVisibility(View.INVISIBLE);
 		
-		intentOut.putExtra("botao", "calcularPontosDeVida");
-		intentOut.putExtra("numeroDeJogadores", qtdeJogadores);//quantidade de jogadores
-		intentOut.putStringArrayListExtra("arrayJogadores", listaJogadores);//lista de jogadores
-		intentOut.putIntegerArrayListExtra("pontuacaoJogadores", listaPontuacao);//lista de pontuacao
-		intentOut.putExtra("jogadorAtual", jogadorAtual);// o jogador atual
-		super.finish();
-		startActivity(intentOut);
+	}
+	
+	public void validarCalculoDoUsuario(View view){
+		try {
+			int somaDasPlacas = Integer.parseInt(campoSomaPlacas.getText().toString());
+			
+			if(somaDasPlacas == pontosRestantes){
+				calculaPontosRestantes();
+			}else{
+				dialogoErroDeCalculo(null);
+			}
+		} catch (NumberFormatException e) {
+			dialogoErroDeCalculo(e);
+		}		
+	}
+	
+	public void dialogoErroDeCalculo(NumberFormatException e){
+		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+		
+		dialogo.setTitle("Erro");
+		if(e == null) dialogo.setMessage("Calculo não está correto.");
+		else          dialogo.setMessage("O campo está vazio.");
+		
+		dialogo.setNegativeButton("Ok", null);
+		dialogo.show();
 	}
 	
 	public void gameOver(){

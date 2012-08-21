@@ -115,17 +115,17 @@
             android:clickable="true"
             android:onClick="acaoDado2"
             android:src="@drawable/dado_face5" />
-
+
         <ImageView
             android:id="@+id/imageViewPlaca_1"
-            android:tag="1"
             android:layout_width="wrap_content"
-            android:layout_height="84dp"
+            android:layout_height="86dp"
             android:layout_x="14dp"
-            android:layout_y="28dp"
+            android:layout_y="25dp"
             android:onClick="abaixarPlaca1"
-            android:src="@drawable/placa_1" />
-
+            android:src="@drawable/placa_1"
+            android:tag="1" />
+
         <ImageView
             android:id="@+id/imageViewPlaca_2"
             android:layout_width="wrap_content"
@@ -138,7 +138,7 @@
         <ImageView
             android:id="@+id/imageViewPlaca_3"
             android:layout_width="wrap_content"
-            android:layout_height="85dp"
+            android:layout_height="86dp"
             android:layout_x="103dp"
             android:layout_y="25dp"
             android:onClick="abaixarPlaca3"
@@ -147,57 +147,57 @@
         <ImageView
             android:id="@+id/imageViewPlaca_4"
             android:layout_width="wrap_content"
-            android:layout_height="87dp"
+            android:layout_height="86dp"
             android:layout_x="147dp"
-            android:layout_y="24dp"
+            android:layout_y="25dp"
             android:onClick="abaixarPlaca4"
             android:src="@drawable/placa_4" />
 
         <ImageView
             android:id="@+id/imageViewPlaca_5"
             android:layout_width="wrap_content"
-            android:layout_height="85dp"
+            android:layout_height="86dp"
             android:layout_x="191dp"
-            android:layout_y="24dp"
+            android:layout_y="25dp"
             android:onClick="abaixarPlaca5"
             android:src="@drawable/placa_5" />
 
         <ImageView
             android:id="@+id/imageViewPlaca_6"
             android:layout_width="wrap_content"
-            android:layout_height="87dp"
+            android:layout_height="86dp"
             android:layout_x="234dp"
-            android:layout_y="21dp"
+            android:layout_y="25dp"
             android:onClick="abaixarPlaca6"
             android:src="@drawable/placa_6" />
 
         <ImageView
             android:id="@+id/imageViewPlaca_7"
             android:layout_width="wrap_content"
-            android:layout_height="84dp"
+            android:layout_height="86dp"
             android:layout_x="274dp"
-            android:layout_y="24dp"
+            android:layout_y="25dp"
             android:onClick="abaixarPlaca7"
             android:src="@drawable/placa_7" />
 
         <ImageView
             android:id="@+id/imageViewPlaca_8"
             android:layout_width="wrap_content"
-            android:layout_height="83dp"
+            android:layout_height="86dp"
             android:layout_x="313dp"
-            android:layout_y="24dp"
+            android:layout_y="25dp"
             android:onClick="abaixarPlaca8"
             android:src="@drawable/placa_8" />
 
         <ImageView
             android:id="@+id/imageViewPlaca_9"
             android:layout_width="wrap_content"
-            android:layout_height="77dp"
+            android:layout_height="86dp"
             android:layout_x="353dp"
             android:layout_y="25dp"
             android:onClick="abaixarPlaca9"
             android:src="@drawable/placa_9" />
-
+
         <ImageView
             android:id="@+id/imageViewPD1"
             android:layout_width="57dp"
@@ -206,7 +206,7 @@
             android:layout_y="117dp"
             android:src="@drawable/placa_down"
             android:visibility="invisible" />
-
+
         <ImageView
             android:id="@+id/imageViewPD2"
             android:layout_width="57dp"
@@ -215,7 +215,7 @@
             android:layout_y="113dp"
             android:src="@drawable/placa_down"
             android:visibility="invisible" />
-
+
         <ImageView
             android:id="@+id/imageViewPD3"
             android:layout_width="57dp"
@@ -303,6 +303,55 @@
             android:layout_x="305dp"
             android:layout_y="172dp"
             android:src="@drawable/dado_face6" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="9dp"
+            android:layout_y="125dp"
+            android:text="Qual a soma das placas?"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="invisible" />
+
+        <EditText
+            android:id="@+id/campo_pontos_de_vida"
+            android:layout_width="136dp"
+            android:layout_height="wrap_content"
+            android:layout_x="264dp"
+            android:layout_y="125dp"
+            android:inputType="number"
+            android:singleLine="true"
+            android:visibility="invisible" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/okSomaPlacas"
+            android:layout_width="45dp"
+            android:layout_height="34dp"
+            android:layout_x="414dp"
+            android:layout_y="125dp"
+            android:onClick="validarCalculoDoUsuario"
+            android:text="OK"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="415dp"
+            android:layout_y="174dp"
+            android:text="Pontos" />
+        <TextView
+            android:id="@+id/rodada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_x="414dp"
+            android:layout_y="196dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
     </AbsoluteLayout>
 

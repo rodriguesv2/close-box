@@ -15,7 +15,6 @@ public class ComoJogarActivity extends Activity{
 	
 	private Intent intentIn;
 	private int tela = 0;
-	private ImageView background;
 	private ImageView bot_next;
 	private ImageView bot_back;
 	private ImageView bot_cancel;
@@ -26,8 +25,7 @@ public class ComoJogarActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.como_jogar);
-		//instancia o background e os botoes de seta para a direita, esquerda e o botao cancelar.
-		background = (ImageView)findViewById(R.id.bg_como_jogar);
+		//instancia os botoes de seta para a direita, esquerda e o botao cancelar.
 		bot_next = (ImageView)findViewById(R.id.bt_next);
 		bot_back = (ImageView)findViewById(R.id.bt_back);
 		bot_cancel = (ImageView)findViewById(R.id.bt_cancelar);
@@ -91,11 +89,7 @@ public class ComoJogarActivity extends Activity{
 	 * @param view o proprio botao
 	 */
 	public void botaoCancel(View view){
-		Intent intent = new Intent(this, ControllerActivity.class);
-		
-		super.finish();
-		intent.putExtra("botao", "botaoComoJogarCancel");
-		startActivity(intent);
+		onBackPressed();
 	}
 	
 }

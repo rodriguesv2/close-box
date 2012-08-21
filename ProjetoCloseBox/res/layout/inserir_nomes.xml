@@ -28,14 +28,16 @@
             android:maxLength="15"
             android:textAppearance="?android:attr/textAppearanceMedium" 
             android:visibility="invisible"/>
-
+
         <EditText
             android:id="@+id/editText1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:maxLength="15"
+            android:singleLine="true"
             android:visibility="invisible" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -54,14 +56,15 @@
             android:maxLength="15"
             android:textAppearance="?android:attr/textAppearanceMedium" 
             android:visibility="invisible"/>
-
+
         <EditText
             android:id="@+id/editText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" 
+            android:layout_weight="1"
             android:maxLength="15"
-            android:visibility="invisible">
+            android:singleLine="true"
+            android:visibility="invisible" >
 
             <requestFocus />
         </EditText>
@@ -84,14 +87,15 @@
             android:maxLength="15"
             android:textAppearance="?android:attr/textAppearanceMedium" 
             android:visibility="invisible"/>
-
+
         <EditText
             android:id="@+id/editText3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" 
+            android:layout_weight="1"
             android:maxLength="15"
-            android:visibility="invisible"/>
+            android:singleLine="true"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
