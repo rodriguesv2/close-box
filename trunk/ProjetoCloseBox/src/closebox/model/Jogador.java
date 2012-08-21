@@ -9,6 +9,11 @@ public class Jogador {
 		this.pontosDeVida = pontosDeVida;
 	}
 	
+	public Jogador(){
+		nome = "";
+		pontosDeVida = 0;
+	}
+	
 	public void setNome(String nome){
 		this.nome = nome;
 	}

@@ -15,7 +15,6 @@ public class HistoriaActivity extends Activity{
 	
 	private Intent intentIn;
 	private int tela = 0;
-	private ImageView backgroundh;
 	private ImageView bot_next;
 	private ImageView bot_back;
 	private ImageView bot_cancel;
@@ -28,8 +27,7 @@ public class HistoriaActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.historia);
-		//instancia o background e os botoes de seta para a direita, esquerda e o botao cancelar.
-		backgroundh = (ImageView)findViewById(R.id.bg_historia1);
+		//instancia os botoes de seta para a direita, esquerda e o botao cancelar.		
 		bot_next = (ImageView)findViewById(R.id.bot_next);
 		bot_back = (ImageView)findViewById(R.id.bot_back);
 		bot_cancel = (ImageView)findViewById(R.id.bot_cancelar);
@@ -93,11 +91,7 @@ public class HistoriaActivity extends Activity{
 	 * @param view o proprio botao
 	 */
 	public void botaoCancel(View view){
-		Intent intent = new Intent(this, ControllerActivity.class);
-		
-		super.finish();
-		intent.putExtra("botao", "botaoHistoriaCancel");
-		startActivity(intent);
+		onBackPressed();
 	}
 	
 }

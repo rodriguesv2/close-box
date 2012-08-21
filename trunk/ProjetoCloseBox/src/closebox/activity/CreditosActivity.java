@@ -65,9 +65,6 @@ public class CreditosActivity extends Activity{
 	}
 	
 	public void botaoVoltar(View view){
-		Intent intent = new Intent(this, ControllerActivity.class);
-		intent.putExtra("botao", "botaoVoltarCredito");
-		super.finish();
-		startActivity(intent);
+		onBackPressed();
 	}
 }
