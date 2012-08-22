@@ -8,12 +8,16 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
+/**
+ * Classe responsavel por mostrar um texto na tela, com as informações dos desenvolvedores e todo os artefatos utilizados no projeto.
+ * @author Reinaldo
+ *
+ */
 public class CreditosActivity extends Activity{
-	private TextView credito;
+	private TextView credito; // TextView responsavel por mostrar o texto "creditos"
 	private Handler handler;
 	private ScrollView scroll;
-	int indice = 0;
+	int indice = 0; // usado como indice na rolagem da tela
 	
 	
 	@Override 
@@ -28,10 +32,16 @@ public class CreditosActivity extends Activity{
 		passarCreditos();
 	}
 	
+	/**
+	 * Insere um texto na TextView da tela, proveniente do método getCredito() da classe Creditos do pacote Model.
+	 */
 	public void mostraCredito(){
 		credito.setText(Creditos.getCredito());
 	}
 	
+	/**
+	 * Thread que faz o scroll do texto,  quando o texto chega ao fim, volta ao começo sucessivamente.
+	 */
 	public void passarCreditos(){
 		Runnable runnable = new Runnable() {
 			 	
@@ -64,6 +74,10 @@ public class CreditosActivity extends Activity{
 		new Thread(runnable).start();
 	}
 	
+	/**
+	 * Implementa o botao voltar do Android
+	 * @param view o proprio botao voltar
+	 */
 	public void botaoVoltar(View view){
 		onBackPressed();
 	}
