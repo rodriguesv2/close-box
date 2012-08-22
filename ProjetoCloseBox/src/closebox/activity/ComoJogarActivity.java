@@ -86,9 +86,7 @@ public class ComoJogarActivity extends Activity{
 	
 	/**
 	 * Metodo que torna o botao 'cancelar' sensivel ao toque.
-	 * Envia uma String que servira de referencia para o Controller
-	 * poder gerenciar a navegacao.
-	 * @param view o proprio botao
+	 *@param view o proprio botao
 	 */
 	public void botaoCancel(View view){
 		onBackPressed();
