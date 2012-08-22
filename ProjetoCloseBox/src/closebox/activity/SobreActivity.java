@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * Classe que inicializa as classes especificas: HistoriaActivity, CreditosActivity e ComoJogarActivity 
+ * de acordo com o botao tocado pelo jogador
+ * @author Reinaldo
+ *
+ */
 public class SobreActivity extends Activity{
 	
 	public void onCreate(Bundle savedInstanceState){
@@ -13,21 +19,21 @@ public class SobreActivity extends Activity{
 	}
 	
 	public void botaoCredito(View view){
-		Intent intent = new Intent(this, ControllerActivity.class);
-		intent.putExtra("botao", "botaoCredito");
-		startActivity(intent);
+		Intent intent = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+		intent.putExtra("botao", "botaoCredito"); // o nome do botao, na verdade uma referencia a ser tratada no controller
+		startActivity(intent); // inicializa a nova Activity
 	}
 	
 	public void botaoHistoria(View view){
-		Intent intent = new Intent(this, ControllerActivity.class);
-		intent.putExtra("botao", "botaoHistoria");
-		startActivity(intent);
+		Intent intent = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+		intent.putExtra("botao", "botaoHistoria"); // o nome do botao, na verdade uma referencia a ser tratada no controller
+		startActivity(intent); // inicializa a nova Activity
 	}
 	
 	public void botaoComoJogar(View view){
-		Intent intent = new Intent(this, ControllerActivity.class);
-		intent.putExtra("botao", "botaoComoJogar");
-		startActivity(intent);
+		Intent intent = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+		intent.putExtra("botao", "botaoComoJogar"); // o nome do botao, na verdade uma referencia a ser tratada no controller
+		startActivity(intent); // inicializa a nova Activity
 	}
 }
 
