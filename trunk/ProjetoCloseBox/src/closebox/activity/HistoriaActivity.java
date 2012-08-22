@@ -13,15 +13,14 @@ import android.widget.ImageView;
  */
 public class HistoriaActivity extends Activity{
 	
-	private Intent intentIn;
-	private int tela = 0;
-	private ImageView bot_next;
-	private ImageView bot_back;
-	private ImageView bot_cancel;
+	private int tela = 0; // variavel usada como indice das telas
+	private ImageView bot_next; // o botao que chama a proxima tela
+	private ImageView bot_back; // o botao que chama a tela anterior
+	private ImageView bot_cancel; // o botao cancelar
 	
 	//Array com a lista das imagens que serao mostradas nas telas.
 	private int[] listaImagem = {R.drawable.historia1,R.drawable.historia2,R.drawable.historia3};
-	private ImageView imagemAtual;
+	private ImageView imagemAtual; // A imagem sendo exibida ao jogador
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -41,13 +40,13 @@ public class HistoriaActivity extends Activity{
 	 * de acordo com a tela, mostra ou esconde os botoes 'next' e 'back'.
 	 */
 	private void mostraBotoes(){
-		if(tela == 0){
+		if(tela == 0){ // na tela inicial (primeira tela) o botao "anterior" fica invisivel
 			bot_back.setVisibility(View.INVISIBLE);
 		}else{
 			bot_back.setVisibility(View.VISIBLE);
 		}
 		
-		if(tela == listaImagem.length-1){
+		if(tela == listaImagem.length-1){//na ultima tela, o botao "proximo" fica invisivel
 			bot_next.setVisibility(View.INVISIBLE);
 		}else{
 			bot_next.setVisibility(View.VISIBLE);
@@ -64,7 +63,7 @@ public class HistoriaActivity extends Activity{
 		if(tela<listaImagem.length){
 			imagemAtual.setImageResource(listaImagem[tela]); 
 		}else{
-			imagemAtual = (ImageView)findViewById(R.id.his1);
+			imagemAtual = (ImageView)findViewById(R.id.his1);// caso o indice seja maior que a lista mostra a primeira imagem da lista
 		}
 		mostraBotoes();
 	}
@@ -79,16 +78,14 @@ public class HistoriaActivity extends Activity{
 		if(tela>=0){
 			imagemAtual.setImageResource(listaImagem[tela]); 
 		}else{
-			imagemAtual = (ImageView)findViewById(R.id.his1); 
+			imagemAtual = (ImageView)findViewById(R.id.his1); // caso o indice seja maior que a lista mostra a primeira imagem da lista
 		}
 		mostraBotoes();
 	}
 	
 	/**
 	 * Metodo que torna o botao 'cancelar' sensivel ao toque.
-	 * Envia uma String que servira de referencia para o Controller
-	 * poder gerenciar a navegacao.
-	 * @param view o proprio botao
+	 *@param view o proprio botao
 	 */
 	public void botaoCancel(View view){
 		onBackPressed();
