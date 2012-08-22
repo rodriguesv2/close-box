@@ -13,14 +13,16 @@ import android.widget.ImageView;
  */
 public class ComoJogarActivity extends Activity{
 	
-	private Intent intentIn;
-	private int tela = 0;
-	private ImageView bot_next;
-	private ImageView bot_back;
-	private ImageView bot_cancel;
-	private int[] listaImagem = {R.drawable.comojogar1,R.drawable.comojogar2,R.drawable.comojogar3,R.drawable.comojogar4};
-	private ImageView imagemAtual;
+	private int tela = 0; // variavel usada como indice das telas
+	private ImageView bot_next; // o botao que chama a proxima tela
+	private ImageView bot_back; // o botao que chama a tela anterior
+	private ImageView bot_cancel; // o botao cancelar
+	private int[] listaImagem = {R.drawable.comojogar1,R.drawable.comojogar2,R.drawable.comojogar3,R.drawable.comojogar4}; // Lista de imagens utilizadas
+	private ImageView imagemAtual; // A imagem sendo exibida ao jogador
 
+	/**
+	 * Inicializa a Activity e chama o layout apropriado, associado a essa Activity.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -39,13 +41,13 @@ public class ComoJogarActivity extends Activity{
 	 * de acordo com a tela, mostra ou esconde os botoes 'next' e 'back'.
 	 */
 	private void mostraBotoes(){
-		if(tela == 0){
+		if(tela == 0){ // na tela inicial (primeira tela) o botao "anterior" fica invisivel
 			bot_back.setVisibility(View.INVISIBLE);
 		}else{
 			bot_back.setVisibility(View.VISIBLE);
 		}
 		
-		if(tela == listaImagem.length-1){
+		if(tela == listaImagem.length-1){ //na ultima tela, o botao "proximo" fica invisivel
 			bot_next.setVisibility(View.INVISIBLE);
 		}else{
 			bot_next.setVisibility(View.VISIBLE);
@@ -62,7 +64,7 @@ public class ComoJogarActivity extends Activity{
 		if(tela<listaImagem.length){
 			imagemAtual.setImageResource(listaImagem[tela]); 
 		}else{
-			imagemAtual = (ImageView)findViewById(R.id.cj1);
+			imagemAtual = (ImageView)findViewById(R.id.cj1); // caso o indice seja maior que a lista mostra a primeira imagem da lista
 		}
 		mostraBotoes();
 	}
@@ -77,7 +79,7 @@ public class ComoJogarActivity extends Activity{
 		if(tela>=0){
 			imagemAtual.setImageResource(listaImagem[tela]); 
 		}else{
-			imagemAtual = (ImageView)findViewById(R.id.cj1);
+			imagemAtual = (ImageView)findViewById(R.id.cj1); // caso o indice seja maior que a lista mostra a primeira imagem da lista
 		}
 		mostraBotoes();
 	}
