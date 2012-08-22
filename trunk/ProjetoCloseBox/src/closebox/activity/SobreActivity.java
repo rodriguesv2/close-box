@@ -19,21 +19,21 @@ public class SobreActivity extends Activity{
 	}
 	
 	public void botaoCredito(View view){
-		Intent intent = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+		Intent intent = new Intent(this, ControllerActivity.class); //determina a nova Activity
 		intent.putExtra("botao", "botaoCredito"); // o nome do botao, na verdade uma referencia a ser tratada no controller
-		startActivity(intent); // inicializa a nova Activity
+		startActivity(intent); // inicializa a nova Activity, envia os dados ao controller
 	}
 	
 	public void botaoHistoria(View view){
-		Intent intent = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+		Intent intent = new Intent(this, ControllerActivity.class); //determina a nova Activity
 		intent.putExtra("botao", "botaoHistoria"); // o nome do botao, na verdade uma referencia a ser tratada no controller
-		startActivity(intent); // inicializa a nova Activity
+		startActivity(intent); // inicializa a nova Activity, envia os dados ao controller
 	}
 	
 	public void botaoComoJogar(View view){
-		Intent intent = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+		Intent intent = new Intent(this, ControllerActivity.class); //determina a nova Activity
 		intent.putExtra("botao", "botaoComoJogar"); // o nome do botao, na verdade uma referencia a ser tratada no controller
-		startActivity(intent); // inicializa a nova Activity
+		startActivity(intent); // inicializa a nova Activity, envia os dados ao controller
 	}
 }
 
