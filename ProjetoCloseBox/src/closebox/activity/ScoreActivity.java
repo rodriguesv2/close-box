@@ -22,7 +22,12 @@ import android.widget.Toast;
 
 
 
-
+/**
+ * Classe responsavel pela persistencia dos dados do jogo, especificamente o Score, isto é, o Ranking com os jogadores
+ * com as melhores pontuações.
+ * @author Reinaldo
+ *
+ */
 public class ScoreActivity extends Activity {
 
 	private Intent intentIn; //intent responsável por receber as informaçoes necessárias 
@@ -31,11 +36,11 @@ public class ScoreActivity extends Activity {
 	int numJogadores; // quantidade de jogadores
 	int jogAtual, pontoJog; // o indice do jogador atual e a sua pontuação
 	private String nomeJog = ""; //o nome do jogador
-	private static final String NOME_BANCO = "closebox"; 
-	private static final String TABELA = "jogador";
-	private static final String ID_TABELA = "_id";
-	private static final String CAMPO_NOME = "nome";
-	private static final String CAMPO_RODADAS = "rodadas";
+	private static final String NOME_BANCO = "closebox"; //String com o nome do database a ser utilizado
+	private static final String TABELA = "jogador"; //String com o nome da tabela
+	private static final String ID_TABELA = "_id"; //String com o nome do campo _id da tabela
+	private static final String CAMPO_NOME = "nome"; //String com o nome do campo nome da tabela
+	private static final String CAMPO_RODADAS = "rodadas"; //String com o nome do campo rodadas
 	private SQLiteDatabase bancoDados = null; // instancia do banco de dados
 	private Cursor cursor;// cursor usado para manipular os dados provenientes do banco de dados
 	
@@ -80,23 +85,23 @@ public class ScoreActivity extends Activity {
 	private void voltaParaJogo(){
 		numJogadores --; //Atualiza a quantidade de jogadores
 		if(numJogadores<1){//Caso não haja mais Jogadores: GAME OVER
-	    	intentOut = new Intent(this, ControllerActivity.class);
-	    	intentOut.putExtra("botao", "gameOver");
+	    	intentOut = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+	    	intentOut.putExtra("botao", "gameOver");// o nome do botao, na verdade uma referencia a ser tratada no controller
 	    	fechaBanco();
 	    	super.finish();
 			startActivity(intentOut);
 		}else{
 			ArrayList<String> jogadores = intentIn.getStringArrayListExtra("arrayJogadores");
-			jogadores.remove(jogAtual);
+			jogadores.remove(jogAtual);//remove o jogador atual da lista de nomes
 			ArrayList<Integer> listaPontuacao = intentIn.getIntegerArrayListExtra("pontuacaoJogadores");
-			listaPontuacao.remove(jogAtual);
+			listaPontuacao.remove(jogAtual);//remove a pontuação do jogador atual
 			ArrayList<Integer> rodadas = intentIn.getIntegerArrayListExtra("listaRodadas");
-			rodadas.remove(jogAtual);
-			if(jogAtual>=numJogadores){
+			rodadas.remove(jogAtual);//remove as rodadas do jogador atual
+			if(jogAtual>=numJogadores){ //evita que o indice fora dos limites da lista
 				jogAtual = 0;
 			}
-			intentOut = new Intent(this, ControllerActivity.class);
-			intentOut.putExtra("botao", "novaRodada");
+			intentOut = new Intent(this, ControllerActivity.class); //envia os dados ao controller
+			intentOut.putExtra("botao", "novaRodada"); // o nome do botao, na verdade uma referencia a ser tratada no controller
 			intentOut.putExtra("numeroDeJogadores", numJogadores);//quantidade de jogadores
 			intentOut.putStringArrayListExtra("arrayJogadores", jogadores);//lista de jogadores
 			intentOut.putIntegerArrayListExtra("pontuacaoJogadores", listaPontuacao);//lista de pontuacao
@@ -113,7 +118,9 @@ public class ScoreActivity extends Activity {
 	 */
 	private void abreouCriaBanco() {
 		try {
-			bancoDados = openOrCreateDatabase(NOME_BANCO, MODE_WORLD_READABLE, null);
+			bancoDados = openOrCreateDatabase(NOME_BANCO, MODE_WORLD_READABLE, null);//abre a conexao com o database passado por parametro
+			
+			//create table if not exists jogador(_id integer primary key autoincrement, nome text, rodadas integer)
 			String sql = "CREATE TABLE IF NOT EXISTS "+TABELA+
 				"("+ID_TABELA+" INTEGER PRIMARY KEY AUTOINCREMENT, "+CAMPO_NOME+
 				" TEXT, "+CAMPO_RODADAS+" INTEGER);";
@@ -196,8 +203,8 @@ public class ScoreActivity extends Activity {
 	private int numRegistros(){
 		int registros = 10;
 		try {
-			Cursor c = bancoDados.rawQuery("select * from "+TABELA+";", null);
-			registros = c.getCount();
+			Cursor c = bancoDados.rawQuery("select * from "+TABELA+";", null); //select * from jogador;
+			registros = c.getCount(); // obtem a contagem
 			return registros;
 		} catch (Exception e) {
 			mensagemExibir("Erro Banco", "Erro buscar dados no banco: " + e.getMessage());
@@ -212,7 +219,7 @@ public class ScoreActivity extends Activity {
 	private int getMenorPonto(){
 		int menor = 0;
 		try { 
-			cursor = bancoDados.rawQuery("select min("+CAMPO_RODADAS+") from jogador;", null); 
+			cursor = bancoDados.rawQuery("select min("+CAMPO_RODADAS+") from jogador;", null); //select min(rodadas) from jogador
 			cursor.moveToFirst();
 			menor = cursor.getInt(cursor.getColumnIndex("min(+CAMPO_RODADAS+)"));
 			return menor;
@@ -228,7 +235,7 @@ public class ScoreActivity extends Activity {
 	 */
 	private void gravarJogador(String valorNome, int valorPontos){
 		try {
-			   String sql="INSERT INTO "+TABELA+" ("+CAMPO_NOME+", "+CAMPO_RODADAS+") " 
+			   String sql="INSERT INTO "+TABELA+" ("+CAMPO_NOME+", "+CAMPO_RODADAS+") " //insert into jogador(nome, rodadas) values('valor', valor);
 			   		+ "values ('"+valorNome+"', "+valorPontos+")";		   
 			   bancoDados.execSQL(sql);			   		   
 		   }
@@ -239,26 +246,28 @@ public class ScoreActivity extends Activity {
 	}
 	
 	/**
-	 * Metodo que busca o valor mais baixo do campo rodadas(integer) e o apaga. 
+	 * Metodo que busca o valor mais baixo do campo rodadas(integer) e o apaga caso haja mais de dez registros no banco de dados. 
 	 */
 	private void apagarUltimo(){
-		try {
-			int menorValor; //variavel que será usada para armazenar o retorno da busca
-			/**
-			 * Essa query busca o id da linha que tem o menor valor no campo rodada,
-			 *  que foi adicionado mais recente, ou seja se dois jogadores com a mesma pontuacao forem encontrados
-			 *   a busca retornara o que foi armazenado por ultimo. (MAIOR ID)
-			 */
-			String sql = ID_TABELA+" = (select max("+ID_TABELA+") from "+TABELA+
-			"where "+CAMPO_RODADAS+" = (select min("+CAMPO_RODADAS+") from "+TABELA+"));";
-			
-			cursor = bancoDados.query(TABELA, new String[] { ID_TABELA, CAMPO_NOME }, 
-					sql, null, null, null, null);
-			cursor.moveToFirst();
-			menorValor = cursor.getInt(cursor.getColumnIndex(ID_TABELA));
-			bancoDados.execSQL("delete from "+TABELA+" where "+ID_TABELA+" = "+menorValor+";");
-		} catch (Exception erro) {
-			mensagemExibir("Erro Banco", "Erro buscar dados no banco: " +erro.getMessage());
+		if(numRegistros()>10){//atende a condição de só apagar caso haja mais de dez registros no banco de dados.
+			try {
+				int menorValor; //variavel que será usada para armazenar o retorno da busca
+				/**
+				 * Essa query busca o id da linha que tem o menor valor no campo rodada,
+				 *  que foi adicionado mais recente, ou seja se dois jogadores com a mesma pontuacao forem encontrados
+				 *   a busca retornara o que foi armazenado por ultimo. (MAIOR ID)
+				 */
+				String sql = ID_TABELA+" = (select max("+ID_TABELA+") from "+TABELA+
+				"where "+CAMPO_RODADAS+" = (select min("+CAMPO_RODADAS+") from "+TABELA+"));";
+				
+				cursor = bancoDados.query(TABELA, new String[] { ID_TABELA, CAMPO_NOME }, 
+						sql, null, null, null, null);
+				cursor.moveToFirst();
+				menorValor = cursor.getInt(cursor.getColumnIndex(ID_TABELA));
+				bancoDados.execSQL("delete from "+TABELA+" where "+ID_TABELA+" = "+menorValor+";");
+			} catch (Exception erro) {
+				mensagemExibir("Erro Banco", "Erro buscar dados no banco: " +erro.getMessage());
+			}
 		}
 	}
 	
@@ -290,13 +299,7 @@ public class ScoreActivity extends Activity {
 	        this.listJogadores = plistJogadores;
 	        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	    }
-	 /*
-	    public void addItem(final Jogador item) {
-	        this.listJogadores.add(item);
-	        //Atualizar a lista caso seja adicionado algum item
-	        notifyDataSetChanged();
-	    }   */ 
-	     
+	    
 	    @Override
 	    public int getCount() {
 	        return listJogadores.size();
@@ -314,7 +317,7 @@ public class ScoreActivity extends Activity {
 	 
 	    @Override
 	    public View getView(int position, View convertView, ViewGroup viewGroup) {
-	        //Pega o registro da lista e trasnfere para o objeto JogadorLV
+	        //Pega o registro da lista e transfere para o objeto JogadorLV
 	        Jogador jogadorLV = listJogadores.get(position);
 	         
 	        //Utiliza o XML score_campos para apresentar na tela
