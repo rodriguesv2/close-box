@@ -3,6 +3,7 @@ package closebox.activity;
 import java.util.ArrayList;
 
 import closebox.model.Jogador;
+import closebox.controle.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,13 +67,8 @@ public class TelaJogoActivity extends Activity{
 	private ImageView placaDown9;
 	private ImageView dadoLancado1;
 	private ImageView dadoLancado2;
-	private boolean placa7abaixada = false;
-	private boolean placa8abaixada = false;
-	private boolean placa9abaixada = false;
-	//private Intent intentIn;
 	private Intent intentOut;
 	private int qtdePlacas = 9;
-	//private boolean jogar1dado = false;
 	private ArrayList<String> listaJogadores;
 	private ArrayList<Integer> listaPontuacao;
 	private int qtdeJogadores;
@@ -89,11 +85,13 @@ public class TelaJogoActivity extends Activity{
 	private int rodada;
 	private boolean calcularPontos = false;
 	private boolean jahDesistiu = false;
+	private Controle controle;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tela_jogo);
+		controle = new Controle();
 		
 		threadDado1();
 		threadDado2();
@@ -269,11 +267,6 @@ public class TelaJogoActivity extends Activity{
 		dado2Parado = false;
 	}
 	
-	//O real valor que o dado recebe.
-	public int sorteio(){
-		int sorteio = (int)Math.ceil((Math.random()*6));	
-		return sorteio;
-	}
 	
 	//Faz com que os dados voltem a posição de jogar.
 	public void escondeDadoLancado(){
@@ -298,7 +291,7 @@ public class TelaJogoActivity extends Activity{
 	
 	//Faz com que o numero sorteado corresponda a imagem do dado.
 	public void sortearDado1(){
-		valorDado1=sorteio();
+		valorDado1 = controle.sorteio();
 		dadoLancado1.setImageResource(listaDados[valorDado1-1]);
 		dadoLancado1.setVisibility(View.VISIBLE);
 	}
@@ -313,7 +306,7 @@ public class TelaJogoActivity extends Activity{
 	
 	//Faz com que o numero sorteado corresponda a imagem do dado.
 	public void sortearDado2(){
-		valorDado2=sorteio();
+		valorDado2 = controle.sorteio();
 		dadoLancado2.setImageResource(listaDados[valorDado2-1]);
 		dadoLancado2.setVisibility(View.VISIBLE);
 	}
@@ -325,83 +318,17 @@ public class TelaJogoActivity extends Activity{
 	//-------------------------------------------------------------------------------------------------------------//
 	//caso de uso abaixar placas
 	
-	
-	
-	public void abaixarPlaca1(View view){
+	public void abaixarPlaca(View view){
 		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa1.setVisibility(View.INVISIBLE);
-			placaDown1.setVisibility(View.VISIBLE);
-			calculaJogada(1);
+			ImageView placa = (ImageView)findViewById(view.getId());
+			ImageView placaDown = (ImageView)findViewById(controle.identificarPlacaDown(view));
+			
+			placa.setVisibility(View.INVISIBLE);
+			placaDown.setVisibility(View.VISIBLE);
+				
+			calculaJogada(controle.getPosicaoDaPlaca(view));
 		}
 	}
-	
-	public void abaixarPlaca2(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa2.setVisibility(View.INVISIBLE);
-			placaDown2.setVisibility(View.VISIBLE);
-			calculaJogada(2);
-		}
-	}
-	
-	public void abaixarPlaca3(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa3.setVisibility(View.INVISIBLE);
-			placaDown3.setVisibility(View.VISIBLE);
-			calculaJogada(3);
-		}
-	}
-	
-	public void abaixarPlaca4(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa4.setVisibility(View.INVISIBLE);
-			placaDown4.setVisibility(View.VISIBLE);
-			calculaJogada(4);
-		}
-	}
-	
-	public void abaixarPlaca5(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa5.setVisibility(View.INVISIBLE);
-			placaDown5.setVisibility(View.VISIBLE);
-			calculaJogada(5);
-		}
-	}
-	
-	public void abaixarPlaca6(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa6.setVisibility(View.INVISIBLE);
-			placaDown6.setVisibility(View.VISIBLE);
-			calculaJogada(6);
-		}
-	}
-	
-	public void abaixarPlaca7(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa7.setVisibility(View.INVISIBLE);
-			placaDown7.setVisibility(View.VISIBLE);
-			placa7abaixada = true;
-			calculaJogada(7);
-		}
-	}
-	
-	public void abaixarPlaca8(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa8.setVisibility(View.INVISIBLE);
-			placaDown8.setVisibility(View.VISIBLE);
-			placa8abaixada = true;
-			calculaJogada(8);
-		}
-	}
-	
-	public void abaixarPlaca9(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
-			placa9.setVisibility(View.INVISIBLE);
-			placaDown9.setVisibility(View.VISIBLE);
-			placa9abaixada = true;
-			calculaJogada(9);
-		}
-	}
-	
 	
 	/*Calcula a soma dos dados e valida a ação levando em conta se uma ou duas
 	 * placas foram abaixadas.
@@ -496,34 +423,29 @@ public class TelaJogoActivity extends Activity{
 		case 7:
 			placa7.setVisibility(View.VISIBLE);
 			placaDown7.setVisibility(View.INVISIBLE);
-			placa7abaixada = false;
+			controle.setFlagPlacasAltasFalse(placa);
 			break;
 			
 		case 8:
 			placa8.setVisibility(View.VISIBLE);
 			placaDown8.setVisibility(View.INVISIBLE);
-			placa8abaixada = false;
+			controle.setFlagPlacasAltasFalse(placa);
 			break;
 			
 		case 9:
 			placa9.setVisibility(View.VISIBLE);
 			placaDown9.setVisibility(View.INVISIBLE);
-			placa9abaixada = false;
+			controle.setFlagPlacasAltasFalse(placa);
 			break;
 
 		default:
 			break;
 		}
 	}
-	
-	public boolean placasAltasAbaixadas(){
-		if(placa7abaixada && placa8abaixada && placa9abaixada) return true;
-		else												   return false;
-	}
-	
+		
 	//Verifica se já foi perguntado se deseja jogar com apenas 1 dado.
 	public void subirDialogoSobreDados(){
-		if(placasAltasAbaixadas() && !jahFoiPerguntadoSobreDados){
+		if(controle.placasAltasAbaixadas() && !jahFoiPerguntadoSobreDados){
 			determinarQuantidadeDeDados();
 			jahFoiPerguntadoSobreDados = true;
 		}
@@ -531,7 +453,7 @@ public class TelaJogoActivity extends Activity{
 	
 	//Detemina se deve haver dois dados.
 	public void determinarQuantidadeDeDados(){
-		if(placasAltasAbaixadas()){
+		if(controle.placasAltasAbaixadas()){
 			AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 			dialogo.setTitle("Sugestão");
 			dialogo.setMessage("As placas 7, 8 e 9 foram abaixadas.\n Deseja jogar " +
@@ -679,4 +601,3 @@ public class TelaJogoActivity extends Activity{
 		startActivity(intentOut);
 	}
 }
-
