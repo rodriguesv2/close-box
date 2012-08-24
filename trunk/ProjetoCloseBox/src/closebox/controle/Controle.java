@@ -10,6 +10,7 @@ public class Controle {
 	
 	public Controle(){
 		abaixarPlacas = new AbaixarPlacas();
+		jogaDado = new JogaDado();
 	}
 	
 	public int sorteio(){
