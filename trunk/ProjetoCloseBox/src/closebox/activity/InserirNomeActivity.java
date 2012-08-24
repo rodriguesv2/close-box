@@ -15,78 +15,110 @@ import java.util.*;
 
 import closebox.model.Jogador;
 
+/**
+ * Classe responsavel pela exibição e pelo preenchimento dos campos relativos ao nome do Jogador
+ * @author Reinaldo
+ */
 public class InserirNomeActivity extends Activity {
-	private Intent intentDados;
-	private Intent intentOut;
-	private EditText editJogador1;
+	private Intent intentDados; // Intent responsavel por receber dados
+	private Intent intentOut; // Intent responsavel por enviar dados
+	private EditText editJogador1; //campo de texto para digitar o nome do Jogador
 	private EditText editJogador2;
 	private EditText editJogador3;
-	private TextView textJogador1;
+	private TextView textJogador1; // o nome de exibição do Jogador
 	private TextView textJogador2;
 	private TextView textJogador3;
-	private ArrayList<String> arrayJogadores; 
-	private ArrayList<Integer> pontosJogador;
-	private ArrayList<Integer> listaRodadas;
-	private int indice = 0;
+	private ArrayList<String> arrayJogadores; // lista com os nomes dos jogadores
+	private ArrayList<Integer> pontosJogador; // lista com pontos de vida dos jogadores
+	private ArrayList<Integer> listaRodadas; // lista com a pontuação (score) dos jogadores
+	private int indice = 0; //variavel usada para determinar a quantidade de campos de acordo com a quantidade de jogadores
 	
-	//Metodo para ação do botão "OK"
-	public void botaoOk(View view){
-		//Instancia a intent com a activity destino"
+	/**
+	 * Metodo chamado ao pressionar o botao "OK"
+	 * Insere a quantidade de jogadores e as listas de nomes, pontos de vida e pontuacao em um Intent e os envia ao Controller
+	 * @param view o proprio botao "OK"
+	 */
+	public void botaoOk(View view) {
+		// Instancia a intent com a activity destino"
 		intentOut = new Intent(this, ControllerActivity.class);
-		
-				if(confirmaPreenchimento(indice)){
-					addJogadores();
-					populaPontos(indice);
-			        
-					//Além de chamar a nova activity, também manda dados
-					intentOut.putExtra("numeroDeJogadores", indice);
-					intentOut.putExtra("botao", "botaoOkInserirNome");
-					
-					intentOut.putStringArrayListExtra("arrayJogadores", arrayJogadores);
-					intentOut.putExtra("jogadorAtual", 0);
-					intentOut.putIntegerArrayListExtra("pontuacaoJogadores", pontosJogador);
-					intentOut.putIntegerArrayListExtra("listaRodadas", listaRodadas);
-					
-					super.finish();
-					//Vai para nova activity
-					startActivity(intentOut);
-				}
+
+		if (confirmaPreenchimento(indice)) { // caso o campo de texto nao esteja vazio
+			addJogadores(); // adiciona os nomes na lista
+			populaPontos(indice); // adiciona os pontos de vida na lista
+
+			// Iserindo os dados no Intent
+			intentOut.putExtra("numeroDeJogadores", indice);
+			intentOut.putExtra("botao", "botaoOkInserirNome");
+			intentOut.putStringArrayListExtra("arrayJogadores", arrayJogadores);
+			intentOut.putExtra("jogadorAtual", 0);
+			intentOut.putIntegerArrayListExtra("pontuacaoJogadores",pontosJogador);
+			intentOut.putIntegerArrayListExtra("listaRodadas", listaRodadas);
+
+			super.finish();
+			// Vai para nova activity
+			startActivity(intentOut);
+		}
 	}
 	
+	/**
+	 * Metodo chamado ao pressionar o botao "CANCELAR"
+	 * Volta para a tela anterior
+	 * @param view o proprio botao "CANCELAR"
+	 */
 	public void botaoCancelar(View view){	
 				onBackPressed();
 	}
 	
-	//Apenas verifica se os EditTexts foram preenchidos, caso contrario retorna falso.
+	/**
+	 * Metodo que verifica se os EditTexts foram preenchidos, caso contrario retorna falso
+	 * e aguarda o preenchimento correto ou que se pressione o botao "CANCELAR"
+	 * @param indice a quantidade de jogadores
+	 * @return true se os campos nao estao vazios e false caso estejam vazios
+	 */
 	private boolean confirmaPreenchimento(int indice){
 		String nome1 = editJogador1.getText().toString();
 		String nome2 = editJogador2.getText().toString();
 		String nome3 = editJogador3.getText().toString();
-		
+		boolean preenchimentoOk = false;
 		this.indice = indice;
 		
-		if(indice == 1){
-			if(nome1.length() == 0){
-				return false;
+		switch (indice) {
+		case 1:
+			if(nome1.length() == 0){ //se os campos nao estao vazios
+				preenchimentoOk = false;
 			}else{
-				return true;
-				
+				preenchimentoOk = true;
 			}
-		}else if(indice == 2){
-			if(nome1.length() == 0 || nome2.length() == 0){
-				return false;
+			break;
+			
+		case 2:
+			if(nome1.length() == 0 || nome2.length() == 0){ //se os campos nao estao vazios
+				preenchimentoOk = false;
 			}else{
-				return true;
-			}
-		}else{
-			if(nome1.length() == 0 || nome2.length() == 0 || nome3.length() == 0){
-				return false;
+				preenchimentoOk = true;
+				}
+			break;
+			
+		case 3:
+			if(nome1.length() == 0 || nome2.length() == 0 || nome3.length() == 0){ //se os campos nao estao vazios
+				preenchimentoOk = false;
 			}else{
-				return true;
+				preenchimentoOk = true;
 			}
+			break;
+
+		default :
+			preenchimentoOk = false;
+			break;
 		}
+		return preenchimentoOk;
 		
 	}
+	
+	/**
+	 * Metodo que preenche os pontos de vida com 45 e os pontos com 0 para cada Jogador
+	 * @param index a quantidade de jogadores
+	 */
 	private void populaPontos(int index){
 		pontosJogador = new ArrayList<Integer>();
 		listaRodadas = new ArrayList<Integer>();
@@ -97,22 +129,23 @@ public class InserirNomeActivity extends Activity {
 	}
 	
 	 
-	//Cria a lista de Jogadores para a proxima activity montar a lista na view.
+	/**
+	 * Metodo que cria a lista de Jogadores para a proxima activity montar a lista na view.
+	 */
 	private void addJogadores(){
-		String string1 = editJogador1.getText().toString();
+		String string1 = editJogador1.getText().toString(); // variavel recebe o nome digitado na caixa de texto
 		String string2 = editJogador2.getText().toString();
 		String string3 = editJogador3.getText().toString();
 		
 		arrayJogadores = new ArrayList<String>();
-		arrayJogadores.add(string1);
+		arrayJogadores.add(string1); // adiciona o nome na lista
 		arrayJogadores.add(string2);
 		arrayJogadores.add(string3);
-		
-		intentOut.putStringArrayListExtra("arrayJogadores", arrayJogadores);
-		intentOut.putExtra("jogadorAtual", 0);
-		intentOut.putExtra("pontuacaoJogadores", pontosJogador);
 	}
 	
+	/**
+	 * Metodo que inicializa os objetos da tela
+	 */
 	private void instanciarObjetos(){
 		editJogador1 = (EditText)findViewById(R.id.editText1);
 		editJogador2 = (EditText)findViewById(R.id.editText2);
@@ -123,31 +156,43 @@ public class InserirNomeActivity extends Activity {
 		
 	}
 	
+	/**
+	 * Metodo que recebe os dados via Intent
+	 */
 	private void setNovaIntent(){
 		intentDados = getIntent();
 	}
 	
-	//Dependendo a quantidade de jogadores escolhidos, alguns campos ficam invisiveis.
+	/**
+	 * Metodo que torna os campos visiveis, de acordo com a quantidade de jogadores escolhidos.
+	 */
 	private void setQuantidadeDeCamposDeTextos(){
 		indice = intentDados.getIntExtra("numeroDeJogadores", 1);
 		
-		if(indice == 1){
+		switch (indice) { // a quantidade de jogadores
+		case 1:
 			editJogador1.setVisibility(View.VISIBLE);
 			textJogador1.setVisibility(View.VISIBLE);
-		
-		}else if(indice == 2){
+			break;
+		case 2:
 			editJogador1.setVisibility(View.VISIBLE);
 			textJogador1.setVisibility(View.VISIBLE);
 			editJogador2.setVisibility(View.VISIBLE);
 			textJogador2.setVisibility(View.VISIBLE);
-			
-		}else{
+			break;
+		case 3:
 			editJogador1.setVisibility(View.VISIBLE);
 			textJogador1.setVisibility(View.VISIBLE);
 			editJogador2.setVisibility(View.VISIBLE);
 			textJogador2.setVisibility(View.VISIBLE);
 			editJogador3.setVisibility(View.VISIBLE);
 			textJogador3.setVisibility(View.VISIBLE);
+			break;
+
+		default:
+			editJogador1.setVisibility(View.VISIBLE);
+			textJogador1.setVisibility(View.VISIBLE);
+			break;
 		}
 	}
 	
