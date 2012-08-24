@@ -6,13 +6,14 @@ import closebox.model.*;
 public class Controle {
 	
 	private AbaixarPlacas abaixarPlacas;
+	private JogaDado jogaDado;
 	
 	public Controle(){
 		abaixarPlacas = new AbaixarPlacas();
 	}
 	
 	public int sorteio(){
-		return abaixarPlacas.sorteio();
+		return jogaDado.sorteio();
 	}
 	
 	public int identificarPlacaDown(View view){

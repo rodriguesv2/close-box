@@ -21,11 +21,6 @@ public class AbaixarPlacas {
 		ordemDasPlacas = new int[9];
 	}
 	
-	public int sorteio(){
-		int sorteio = (int)Math.ceil((Math.random()*6));	
-		return sorteio;
-	}
-	
 	public int identificarPlacaDown(View view){
 		int idPlacaDown;
 		
