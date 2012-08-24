@@ -122,7 +122,7 @@
             android:layout_height="86dp"
             android:layout_x="14dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca1"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_1"
             android:tag="1" />
 
@@ -132,7 +132,7 @@
             android:layout_height="86dp"
             android:layout_x="57dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca2"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_2" />
 
         <ImageView
@@ -141,7 +141,7 @@
             android:layout_height="86dp"
             android:layout_x="103dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca3"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_3" />
 
         <ImageView
@@ -150,7 +150,7 @@
             android:layout_height="86dp"
             android:layout_x="147dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca4"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_4" />
 
         <ImageView
@@ -159,7 +159,7 @@
             android:layout_height="86dp"
             android:layout_x="191dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca5"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_5" />
 
         <ImageView
@@ -168,7 +168,7 @@
             android:layout_height="86dp"
             android:layout_x="234dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca6"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_6" />
 
         <ImageView
@@ -177,7 +177,7 @@
             android:layout_height="86dp"
             android:layout_x="274dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca7"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_7" />
 
         <ImageView
@@ -186,7 +186,7 @@
             android:layout_height="86dp"
             android:layout_x="313dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca8"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_8" />
 
         <ImageView
@@ -195,7 +195,7 @@
             android:layout_height="86dp"
             android:layout_x="353dp"
             android:layout_y="25dp"
-            android:onClick="abaixarPlaca9"
+            android:onClick="abaixarPlaca"
             android:src="@drawable/placa_9" />
 
         <ImageView
