@@ -103,7 +103,7 @@
             android:layout_x="164dp"
             android:layout_y="176dp"
             android:clickable="true"
-            android:onClick="acaoDado1"
+            android:onClick="acaoDado"
             android:src="@drawable/dado_face2" />
 
         <ImageView
@@ -113,7 +113,7 @@
             android:layout_x="280dp"
             android:layout_y="174dp"
             android:clickable="true"
-            android:onClick="acaoDado2"
+            android:onClick="acaoDado"
             android:src="@drawable/dado_face5" />
 
         <ImageView
