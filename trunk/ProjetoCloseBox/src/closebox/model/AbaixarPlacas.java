@@ -16,6 +16,10 @@ public class AbaixarPlacas {
 	private boolean placa7abaixada = false;
 	private boolean placa8abaixada = false;
 	private boolean placa9abaixada = false;
+	private boolean primeiraPlaca = true;
+	private int qtdePlacas = 9;
+	private int pontosRestantes = 45;
+	private JogaDado jogaDado;
 	
 	public AbaixarPlacas(){
 		ordemDasPlacas = new int[9];
@@ -166,11 +170,15 @@ public class AbaixarPlacas {
 		else			   placa9abaixada = false;
 	}
 	
+	public void setJogaDado(JogaDado jogaDado){
+		this.jogaDado = jogaDado;
+	}
+	
+	public void calculaJogada(int placa, boolean primeiraPlaca){
+		
+	}
 	
 	
-	
-	
-	//private int getImagem(){}
 	
 	
 	

@@ -29,21 +29,14 @@ public class TelaJogoActivity extends Activity{
 	private TextView pontos3;
 	private Intent dadosIntent;
 	private Handler handler;
-	private boolean girar;
-	private boolean girar2;
 	private ImageView dado1;
 	private ImageView dado2;
-	private boolean dado1Parado = false;//garante que o dado foi acionado
-	private boolean dado2Parado = false;//garante que o dado foi acionado
-	private int valorDado1;
-	private int valorDado2;
 	private Runnable runnable1;
 	private Runnable runnable2;
 	private int[]listaDados = {R.drawable.dado_face1,R.drawable.dado_face2,R.drawable.dado_face3,
 			R.drawable.dado_face4,R.drawable.dado_face5,R.drawable.dado_face6};
 	
-	private int pontuacao;
-	private int somaDados = 0;
+	//private int somaDados = 0;
 	private boolean primeiraPlaca = true;
 	private int diferenca;
 	private int placaAnterior = 0;
@@ -110,7 +103,6 @@ public class TelaJogoActivity extends Activity{
 		listaJogadores = dadosIntent.getStringArrayListExtra("arrayJogadores");
 		listaPontuacao = dadosIntent.getIntegerArrayListExtra("pontuacaoJogadores");
 		jogadorAtual = dadosIntent.getIntExtra("jogadorAtual", 0);
-		pontuacao = listaPontuacao.get(jogadorAtual);
 		listaRodadas = dadosIntent.getIntegerArrayListExtra("listaRodadas");
 		rodada = listaRodadas.get(jogadorAtual);
 		
@@ -205,8 +197,8 @@ public class TelaJogoActivity extends Activity{
 			int i = 2;
 			@Override
 			public void run() {
-				girar = true;
-				while (girar) {
+				controle.setGirarDado1(true);
+				while (controle.getGirarDado1()) {
 					final int value = i;
 					try {
 						Thread.sleep(100);
@@ -229,7 +221,7 @@ public class TelaJogoActivity extends Activity{
 			}
 		};
 		new Thread(runnable1).start();
-		dado1Parado = false;
+		controle.setDado1Parado(false);
 	}
 	
 	//Faz o dado 2 girar.
@@ -239,8 +231,8 @@ public class TelaJogoActivity extends Activity{
 			int i = 4;
 			@Override
 			public void run() {
-				girar2 = true;
-				while (girar2) {
+				controle.setGirarDado2(true);
+				while (controle.getGirarDado2()) {
 					
 					final int value = i;
 					try {
@@ -264,7 +256,7 @@ public class TelaJogoActivity extends Activity{
 			}
 		};
 		new Thread(runnable2).start();
-		dado2Parado = false;
+		controle.setDado2Parado(false);
 	}
 	
 	
@@ -281,33 +273,27 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	//Faz com que o dado 1 seja jogado.
-	public void acaoDado1(View view){
-		dado1.setVisibility(View.INVISIBLE);
-		girar = false;
-		dado1Parado = true;
-		sortearDado1();
+	public void acaoDado(View view){
+		ImageView dado = (ImageView)findViewById(view.getId());
+		
+		dado.setVisibility(View.INVISIBLE);
+		controle.acaoDado(view);
+		
+		if(view.getId() == R.id.imageView1)sortearDado1();
+		else							   sortearDado2();
 	}
 	
 	//Faz com que o numero sorteado corresponda a imagem do dado.
 	public void sortearDado1(){
-		valorDado1 = controle.sorteio();
-		dadoLancado1.setImageResource(listaDados[valorDado1-1]);
+		controle.sorteioDado1();
+		dadoLancado1.setImageResource(listaDados[controle.getValorDado1()-1]);
 		dadoLancado1.setVisibility(View.VISIBLE);
-	}
-	
-	//Faz com que o dado 2 seja jogado.
-	public void acaoDado2(View view){
-		dado2.setVisibility(View.INVISIBLE);
-		girar2 = false;
-		dado2Parado = true;
-		sortearDado2();
 	}
 	
 	//Faz com que o numero sorteado corresponda a imagem do dado.
 	public void sortearDado2(){
-		valorDado2 = controle.sorteio();
-		dadoLancado2.setImageResource(listaDados[valorDado2-1]);
+		controle.sorteioDado2();
+		dadoLancado2.setImageResource(listaDados[controle.getValorDado2()-1]);
 		dadoLancado2.setVisibility(View.VISIBLE);
 	}
 	
@@ -319,13 +305,15 @@ public class TelaJogoActivity extends Activity{
 	//caso de uso abaixar placas
 	
 	public void abaixarPlaca(View view){
-		if(((dado1Parado && dado2Parado) || (dado1Parado && ehUmDado)) && !calcularPontos){
+		if(((controle.getDado1Parado() && controle.getDado2Parado()) 
+				|| (controle.getDado1Parado() && ehUmDado)) && !calcularPontos){
+
 			ImageView placa = (ImageView)findViewById(view.getId());
 			ImageView placaDown = (ImageView)findViewById(controle.identificarPlacaDown(view));
-			
+
 			placa.setVisibility(View.INVISIBLE);
 			placaDown.setVisibility(View.VISIBLE);
-				
+
 			calculaJogada(controle.getPosicaoDaPlaca(view));
 		}
 	}
@@ -334,14 +322,15 @@ public class TelaJogoActivity extends Activity{
 	 * placas foram abaixadas.
 	 */
 	public void calculaJogada(int placa){
-		if(!ehUmDado)somaDados = valorDado1 + valorDado2;
-		else					  somaDados = valorDado1;
-		
+		int somaDados;
+		if(!ehUmDado)somaDados = controle.getValorDado1() + controle.getValorDado2();
+		else		 somaDados = controle.getValorDado1();
+
 		if(primeiraPlaca){
-			if(placa==somaDados){
+			if(placa == somaDados){
 				qtdePlacas --;
 				pontosRestantes -= placa;
-				rodada +=10;
+				rodada += 10;
 				rodadaAtual.setText(rodada+"");
 				threadDado1();
 				threadDado2();
@@ -356,8 +345,8 @@ public class TelaJogoActivity extends Activity{
 			if(placa==diferenca){
 				qtdePlacas = qtdePlacas -2;
 				pontosRestantes -= (placa+placaAnterior);
-				primeiraPlaca =true;
-				rodada +=5;
+				primeiraPlaca = true;
+				rodada += 5;
 				rodadaAtual.setText(rodada+"");
 				threadDado1();
 				threadDado2();
@@ -368,9 +357,9 @@ public class TelaJogoActivity extends Activity{
 			}
 		}
 		if(qtdePlacas == 0){
-			rodada +=30;
-			girar = false;
-			girar2 = false;
+			rodada += 30;
+			controle.setGirarDado1(false);
+			controle.setGirarDado2(false);
 			calculaPontosRestantes();
 		}
 	}
@@ -379,8 +368,8 @@ public class TelaJogoActivity extends Activity{
 	private void levantar2Placas(int placa, int placaAnterior) {
 		levantarPlaca(placa);
 		levantarPlaca(placaAnterior);
-		dado1Parado = true;
-		dado2Parado = true;
+		controle.setDado1Parado(true);
+		controle.setDado2Parado(true);
 		primeiraPlaca = true;
 		this.placaAnterior = 0;
 		
@@ -501,7 +490,6 @@ public class TelaJogoActivity extends Activity{
 			dialogo.setMessage("Tem certeza que não há jogadas possíveis?");
 
 			dialogo.setPositiveButton("CONFIRMAR", new OnClickListener() {
-
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					mostrarCalcularPontos();
@@ -509,7 +497,6 @@ public class TelaJogoActivity extends Activity{
 			});
 
 			dialogo.setNegativeButton("TENTAR NOVAMENTE", new OnClickListener() {
-
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					try {
