@@ -1,17 +1,68 @@
 package closebox.controle;
 
+import java.util.ArrayList;
+
 import android.view.View;
 import closebox.activity.R;
 import closebox.model.*;
 
-public class Controle {
+public class Controle{
 	
 	private AbaixarPlacas abaixarPlacas;
 	private JogaDado jogaDado;
+	private Pontos pontos;
 	
 	public Controle(){
 		abaixarPlacas = new AbaixarPlacas();
 		jogaDado = new JogaDado();
+		pontos = new Pontos();
+		incluirJogaDadoEPontosAoAbaixarPlacas();
+	}
+	
+	private void incluirJogaDadoEPontosAoAbaixarPlacas(){
+		abaixarPlacas.setJogaDado(jogaDado);
+		abaixarPlacas.setPontos(pontos);
+	}
+	
+	public boolean isPerguntarSobreDado() {
+		return abaixarPlacas.isPerguntarSobreDado();
+	}
+
+	public void setPerguntarSobreDado(boolean perguntarSobreDado) {
+		abaixarPlacas.setPerguntarSobreDado(perguntarSobreDado);
+	}
+	
+	public boolean isMostraRanking() {
+		return abaixarPlacas.isMostraRanking();
+	}
+
+	public void setMostraRanking(boolean mostraRanking) {
+		abaixarPlacas.setMostraRanking(mostraRanking);
+	}
+
+	
+	public int getPlacaAnterior() {
+		return abaixarPlacas.getPlacaAnterior();
+	}
+	
+	public void setPlacaAnterior(int placa){
+		abaixarPlacas.setPlacaAnterior(placa);
+	}
+	
+	public boolean isLevantarPlacas() {
+		return abaixarPlacas.isLevantarPlacas();
+	}
+
+	public void setLevantarPlacas(boolean levantarPlacas) {
+		abaixarPlacas.setLevantarPlacas(levantarPlacas);
+	}
+	
+	public boolean isCalcularPontosRestantes() {
+		return abaixarPlacas.isCalcularPontosRestantes();
+	}
+	
+	public void gerenciaJogada(int placa){
+		abaixarPlacas.gerenciaJogada(placa);
 	}
 	
 	public int identificarPlacaDown(View view){
@@ -34,6 +85,10 @@ public class Controle {
 		return abaixarPlacas.placasAltasAbaixadas();
 	}
 	
+	public void setPrimeiraPlaca(boolean primeiraPlaca){
+		abaixarPlacas.setPrimeiraPlaca(primeiraPlaca);
+	}
+	
 	public void setFlagPlacasAltasFalse(int placa){
 		abaixarPlacas.setFlagPlacasAltasFalse(placa);
 	}
@@ -52,6 +107,10 @@ public class Controle {
 	
 	public int getValorDado2(){
 		return jogaDado.getValorDado2();
+	}
+	
+	public int resultadoDaSoma(){
+		return jogaDado.resultadoDaSoma();
 	}
 	
 	public void sorteioDado1(){
@@ -75,7 +134,15 @@ public class Controle {
 	}
 	
 	public boolean getGirarDado2(){
-		return jogaDado.getGirarDado1();
+		return jogaDado.getGirarDado2();
+	}
+	
+	public boolean isGirarDados() {
+		return abaixarPlacas.isGirarDados();
+	}
+	
+	public void setGirarDados(boolean girarDados){
+		abaixarPlacas.setGirarDados(girarDados);
 	}
 	
 	public void acaoDado(View view){
@@ -96,5 +163,53 @@ public class Controle {
 	
 	public boolean getDado2Parado(){
 		return jogaDado.getDado2Parado();
+	}
+	
+	public void setEhUmDado(boolean ehUmDado){
+		jogaDado.setEhUmDado(ehUmDado);
+	}
+	
+	public boolean getEhUmDado(){
+		return jogaDado.getEhUmDado();
+	}
+	
+	public void calculaJogada(int aSerSubtraido, boolean ehUmaPlaca){
+		pontos.calculaJogada(aSerSubtraido, ehUmaPlaca);
+	}
+	
+	public int getPontosRestantes(){
+		return pontos.getPontosRestantes();
+	}
+	
+	public int getPontosRanking(){
+		return pontos.getPontosRanking();
+	}
+	
+	public void setPontosRanking(int ranking){
+		pontos.setPontosRanking(ranking);
+	}
+	
+	public void setQuantidadeJodador(int qtdeJogadores){
+		abaixarPlacas.setQuantidadeJodador(qtdeJogadores);
+	}
+	
+	public int getQuantidadejogador(){
+		return abaixarPlacas.getQuantidadejogador();
+	}
+	
+	public void setListaDeJogadores(ArrayList<String> listaJogadores){
+		abaixarPlacas.setListaDeJogadores(listaJogadores);
+	}
+	
+	public ArrayList<String> getListaDeJogadores(){
+		return abaixarPlacas.getListaDeJogadores();
+	}
+	
+	public ArrayList<Integer> getListaPontuacao() {
+		return pontos.getListaPontuacao();
+	}
+
+	public void setListaPontuacao(ArrayList<Integer> listaPontuacao) {
+		pontos.setListaPontuacao(listaPontuacao);
 	}
 }

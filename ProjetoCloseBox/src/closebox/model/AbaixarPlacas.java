@@ -1,5 +1,7 @@
 package closebox.model;
 
+import java.util.ArrayList;
+
 import closebox.activity.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,18 +15,86 @@ import android.view.View;
 public class AbaixarPlacas {
 	
 	private int[] ordemDasPlacas;
-	private boolean placa7abaixada = false;
-	private boolean placa8abaixada = false;
-	private boolean placa9abaixada = false;
-	private boolean primeiraPlaca = true;
-	private int qtdePlacas = 9;
-	private int pontosRestantes = 45;
+	private boolean placa7abaixada;
+	private boolean placa8abaixada;
+	private boolean placa9abaixada;
+	private boolean primeiraPlaca;
+	private int placaAnterior;
+	private int qtdePlacas;
+	private int qtdeJogadores;
+	private int jogadorAtual;
+	private int diferenca;
+	private boolean girarDados;
+	private boolean levantarPlacas;
+	private boolean calcularPontosRestantes;
+	private boolean mostraRanking;
+	private boolean perguntarSobreDado;
 	private JogaDado jogaDado;
+	private Pontos pontos;
+	private ArrayList<String> listaJogadores;
 	
 	public AbaixarPlacas(){
 		ordemDasPlacas = new int[9];
+		placa7abaixada = false;
+		placa8abaixada = false;
+		placa9abaixada = false;
+		qtdePlacas = 9;
+		primeiraPlaca = true;
+		girarDados = false;
+		levantarPlacas = false;
+		calcularPontosRestantes = false;
+		mostraRanking = false;
+		perguntarSobreDado = false;
+	}
+		
+	public boolean isPerguntarSobreDado() {
+		return perguntarSobreDado;
+	}
+
+	public void setPerguntarSobreDado(boolean perguntarSobreDado) {
+		this.perguntarSobreDado = perguntarSobreDado;
+	}
+
+	public boolean isMostraRanking() {
+		return mostraRanking;
+	}
+
+	public void setMostraRanking(boolean mostraRanking) {
+		this.mostraRanking = mostraRanking;
+	}
+
+	public int getPlacaAnterior() {
+		return placaAnterior;
+	}
+
+	public boolean isCalcularPontosRestantes() {
+		return calcularPontosRestantes;
+	}
+
+	public void setJogaDado(JogaDado jogaDado){
+		this.jogaDado = jogaDado;
 	}
 	
+	public void setPontos(Pontos pontos){
+		this.pontos = pontos;
+	}
+	
+	public boolean isGirarDados() {
+		return girarDados;
+	}
+	
+	public void setGirarDados(boolean girarDados){
+		this.girarDados = girarDados;
+	}
+	
+	public boolean isLevantarPlacas() {
+		return levantarPlacas;
+	}
+
+	public void setLevantarPlacas(boolean levantarPlacas) {
+		this.levantarPlacas = levantarPlacas;
+	}
+
 	public int identificarPlacaDown(View view){
 		int idPlacaDown;
 		
@@ -170,12 +240,66 @@ public class AbaixarPlacas {
 		else			   placa9abaixada = false;
 	}
 	
-	public void setJogaDado(JogaDado jogaDado){
-		this.jogaDado = jogaDado;
+	public void setQuantidadeJodador(int qtdeJogadores){
+		this.qtdeJogadores = qtdeJogadores;
 	}
 	
-	public void calculaJogada(int placa, boolean primeiraPlaca){
-		
+	public int getQuantidadejogador(){
+		return qtdeJogadores;
+	}
+	
+	public void setListaDeJogadores(ArrayList<String> listaJogadores){
+		this.listaJogadores = listaJogadores;
+	}
+	
+	public ArrayList<String> getListaDeJogadores(){
+		return listaJogadores;
+	}
+	
+	public void setPlacaAnterior(int placa){
+		placaAnterior = placa;
+	}
+	
+	public void setPrimeiraPlaca(boolean primeiraPlaca){
+		this.primeiraPlaca = primeiraPlaca;
+	}
+	
+	public void gerenciaJogada(int placa){
+		int somaDados;
+		if(!jogaDado.getEhUmDado())somaDados = jogaDado.resultadoDaSoma();
+		else		               somaDados = jogaDado.getValorDado1();
+
+		if(primeiraPlaca){
+			if(placa == somaDados){
+				qtdePlacas --;
+				pontos.calculaJogada(placa, primeiraPlaca);
+				girarDados = true;
+				levantarPlacas = false;
+				mostraRanking = true;
+				perguntarSobreDado = true;
+			}else{
+				primeiraPlaca = false;
+				diferenca = somaDados - placa;
+				placaAnterior = placa;
+			}
+		}else{
+			if(placa==diferenca){
+				qtdePlacas -= 2;
+				pontos.calculaJogada((placa+placaAnterior), primeiraPlaca);
+				primeiraPlaca = true;
+				girarDados = true;
+				mostraRanking = true;
+				perguntarSobreDado = true;
+			}else{
+				levantarPlacas = true;
+			}
+		}
+		if(qtdePlacas == 0){
+			pontos.adicionarPontosRanking(30);
+			jogaDado.setGirarDado1(false);
+			jogaDado.setGirarDado2(false);
+			calcularPontosRestantes = true;
+		}
 	}
 	
 	
