@@ -11,6 +11,7 @@ public class JogaDado {
 	private boolean dado2Parado = false;//garante que o dado foi acionado
 	private int valorDado1;
 	private int valorDado2;
+	private boolean ehUmDado = false;
 	
 	public void sorteioDado1(){
 		valorDado1 = (int)Math.ceil((Math.random()*6));
@@ -26,6 +27,10 @@ public class JogaDado {
 	
 	public void setValorDado2(int valorDado2){
 		this.valorDado2 = valorDado2;
+	}
+	
+	public int resultadoDaSoma(){
+		return valorDado1 + valorDado2;
 	}
 	
 	public int getValorDado1(){
@@ -66,6 +71,14 @@ public class JogaDado {
 	
 	public boolean getDado2Parado(){
 		return dado2Parado;
+	}
+	
+	public void setEhUmDado(boolean ehUmDado){
+		this.ehUmDado = ehUmDado;
+	}
+	
+	public boolean getEhUmDado(){
+		return ehUmDado;
 	}
 	
 	public void acaoDado(View view){

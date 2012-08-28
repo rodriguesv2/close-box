@@ -2,7 +2,6 @@ package closebox.activity;
 
 import java.util.ArrayList;
 
-import closebox.model.Jogador;
 import closebox.controle.*;
 
 import android.app.Activity;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,11 +33,6 @@ public class TelaJogoActivity extends Activity{
 	private Runnable runnable2;
 	private int[]listaDados = {R.drawable.dado_face1,R.drawable.dado_face2,R.drawable.dado_face3,
 			R.drawable.dado_face4,R.drawable.dado_face5,R.drawable.dado_face6};
-	
-	//private int somaDados = 0;
-	private boolean primeiraPlaca = true;
-	private int diferenca;
-	private int placaAnterior = 0;
 	private ImageView placa1;
 	private ImageView placa2; 
 	private ImageView placa3; 
@@ -61,21 +54,14 @@ public class TelaJogoActivity extends Activity{
 	private ImageView dadoLancado1;
 	private ImageView dadoLancado2;
 	private Intent intentOut;
-	private int qtdePlacas = 9;
-	private ArrayList<String> listaJogadores;
-	private ArrayList<Integer> listaPontuacao;
-	private int qtdeJogadores;
-	private int jogadorAtual;
-	private int pontosRestantes = 45;
+	private int jogadorAtual;//
 	private TextView apontador;
-	private boolean ehUmDado = false;
 	private boolean jahFoiPerguntadoSobreDados = false;
 	private TextView qualSomaDasPlacas;
 	private EditText campoSomaPlacas;
 	private Button okSomaPlacas;
 	private TextView rodadaAtual;
 	private ArrayList<Integer> listaRodadas;
-	private int rodada;
 	private boolean calcularPontos = false;
 	private boolean jahDesistiu = false;
 	private Controle controle;
@@ -99,28 +85,30 @@ public class TelaJogoActivity extends Activity{
 	//Mostra apenas as TextViews com conteudo.
 	private void mostrarJogadores(){
 		//Recebe dados da activity que a chamou.
-		qtdeJogadores = dadosIntent.getIntExtra("numeroDeJogadores",2);
-		listaJogadores = dadosIntent.getStringArrayListExtra("arrayJogadores");
-		listaPontuacao = dadosIntent.getIntegerArrayListExtra("pontuacaoJogadores");
+		controle.setQuantidadeJodador(dadosIntent.getIntExtra("numeroDeJogadores",2));
+		controle.setListaDeJogadores(dadosIntent.getStringArrayListExtra("arrayJogadores"));
+		controle.setListaPontuacao(dadosIntent.getIntegerArrayListExtra("pontuacaoJogadores"));
 		jogadorAtual = dadosIntent.getIntExtra("jogadorAtual", 0);
 		listaRodadas = dadosIntent.getIntegerArrayListExtra("listaRodadas");
-		rodada = listaRodadas.get(jogadorAtual);
+		controle.setPontosRanking(listaRodadas.get(jogadorAtual));
+		
+		ArrayList<String> listaJogadores = controle.getListaDeJogadores();
+		ArrayList<Integer> listaPontuacao = controle.getListaPontuacao();
 		
 		Toast toast = Toast.makeText(getBaseContext(), "Agora é a vez de "+ listaJogadores.get(jogadorAtual), Toast.LENGTH_SHORT);
 		toast.show();
 		
-		if(qtdeJogadores == 1){
+		if(controle.getQuantidadejogador() == 1){
 			jogador2.setVisibility(View.INVISIBLE);
 			jogador3.setVisibility(View.INVISIBLE);
 			pontos2.setVisibility(View.INVISIBLE);
 			pontos3.setVisibility(View.INVISIBLE);
-			
-			
+					
 			jogador1.setText(listaJogadores.get(0)+"  ");
 			pontos1.setText(listaPontuacao.get(0)+"");
 			
 		
-		}else if(qtdeJogadores == 2){
+		}else if(controle.getQuantidadejogador() == 2){
 			jogador3.setVisibility(View.INVISIBLE);
 			pontos3.setVisibility(View.INVISIBLE);
 			
@@ -137,7 +125,7 @@ public class TelaJogoActivity extends Activity{
 			jogador3.setText(listaJogadores.get(2)+"  ");
 			pontos3.setText(listaPontuacao.get(2)+"");
 		}
-		rodadaAtual.setText(rodada+"");
+		rodadaAtual.setText(controle.getPontosRanking()+"");
 		apontaJogador(jogadorAtual);
 	}
 	
@@ -209,7 +197,7 @@ public class TelaJogoActivity extends Activity{
 						@Override
 						public void run() {
 							if(value<6){
-							dado1.setImageResource(listaDados[value]);
+								dado1.setImageResource(listaDados[value]);
 							}else{
 								i = 0;
 								dado1.setImageResource(listaDados[i]);
@@ -223,7 +211,7 @@ public class TelaJogoActivity extends Activity{
 		new Thread(runnable1).start();
 		controle.setDado1Parado(false);
 	}
-	
+
 	//Faz o dado 2 girar.
 	public void threadDado2() {
 		// Do something long
@@ -233,7 +221,7 @@ public class TelaJogoActivity extends Activity{
 			public void run() {
 				controle.setGirarDado2(true);
 				while (controle.getGirarDado2()) {
-					
+
 					final int value = i;
 					try {
 						Thread.sleep(100);
@@ -244,7 +232,7 @@ public class TelaJogoActivity extends Activity{
 						@Override
 						public void run() {
 							if(value<6){
-							dado2.setImageResource(listaDados[value]);
+								dado2.setImageResource(listaDados[value]);
 							}else{
 								i = 0;
 								dado2.setImageResource(listaDados[i]);
@@ -262,7 +250,7 @@ public class TelaJogoActivity extends Activity{
 	
 	//Faz com que os dados voltem a posição de jogar.
 	public void escondeDadoLancado(){
-		if(!ehUmDado){
+		if(!controle.getEhUmDado()){
 			dadoLancado1.setVisibility(View.INVISIBLE);
 			dadoLancado2.setVisibility(View.INVISIBLE);
 			dado1.setVisibility(View.VISIBLE);
@@ -306,7 +294,7 @@ public class TelaJogoActivity extends Activity{
 	
 	public void abaixarPlaca(View view){
 		if(((controle.getDado1Parado() && controle.getDado2Parado()) 
-				|| (controle.getDado1Parado() && ehUmDado)) && !calcularPontos){
+				|| (controle.getDado1Parado() && controle.getEhUmDado())) && !calcularPontos){
 
 			ImageView placa = (ImageView)findViewById(view.getId());
 			ImageView placaDown = (ImageView)findViewById(controle.identificarPlacaDown(view));
@@ -322,56 +310,46 @@ public class TelaJogoActivity extends Activity{
 	 * placas foram abaixadas.
 	 */
 	public void calculaJogada(int placa){
-		int somaDados;
-		if(!ehUmDado)somaDados = controle.getValorDado1() + controle.getValorDado2();
-		else		 somaDados = controle.getValorDado1();
-
-		if(primeiraPlaca){
-			if(placa == somaDados){
-				qtdePlacas --;
-				pontosRestantes -= placa;
-				rodada += 10;
-				rodadaAtual.setText(rodada+"");
-				threadDado1();
-				threadDado2();
-				escondeDadoLancado();
-				subirDialogoSobreDados();
-			}else{
-				primeiraPlaca = false;
-				diferenca = somaDados - placa;
-				placaAnterior  = placa;
-			}
-		}else{
-			if(placa==diferenca){
-				qtdePlacas = qtdePlacas -2;
-				pontosRestantes -= (placa+placaAnterior);
-				primeiraPlaca = true;
-				rodada += 5;
-				rodadaAtual.setText(rodada+"");
-				threadDado1();
-				threadDado2();
-				escondeDadoLancado();
-				subirDialogoSobreDados();
-			}else{
-				levantar2Placas(placa, placaAnterior);
-			}
+		controle.gerenciaJogada(placa);
+		
+		if(controle.isLevantarPlacas()){
+			levantar2Placas(placa, controle.getPlacaAnterior());
+			controle.setLevantarPlacas(false);
 		}
-		if(qtdePlacas == 0){
-			rodada += 30;
-			controle.setGirarDado1(false);
-			controle.setGirarDado2(false);
+		if(controle.isGirarDados()){
+			threadDado1();
+			threadDado2();
+			controle.setGirarDados(false);
+			escondeDadoLancado();
+		}
+		if(controle.isMostraRanking()){
+			rodadaAtual.setText(""+controle.getPontosRanking());
+			controle.setMostraRanking(false);
+		}
+		if(controle.isCalcularPontosRestantes()){
 			calculaPontosRestantes();
 		}
+		if(controle.isPerguntarSobreDado()){
+			subirDialogoSobreDados();
+			controle.setPerguntarSobreDado(false);
+		}
 	}
-
+	
+	public void girarDados(){
+		if(controle.isGirarDados()){
+			threadDado1();
+			threadDado2();
+		}
+	}
+	
 	//Levanta as 2 placas.
 	private void levantar2Placas(int placa, int placaAnterior) {
 		levantarPlaca(placa);
 		levantarPlaca(placaAnterior);
 		controle.setDado1Parado(true);
 		controle.setDado2Parado(true);
-		primeiraPlaca = true;
-		this.placaAnterior = 0;
+		controle.setPrimeiraPlaca(true);
+		controle.setPlacaAnterior(0);
 		
 		mensagemJogadaErrada(placa, placaAnterior);
 	}
@@ -452,7 +430,7 @@ public class TelaJogoActivity extends Activity{
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					ehUmDado = true;
+					controle.setEhUmDado(true);
 					inutilizarDado2();
 				}
 			});
@@ -500,10 +478,19 @@ public class TelaJogoActivity extends Activity{
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					try {
+						jahDesistiu = false;
 						this.finalize();
 					} catch (Throwable e) {
 						e.printStackTrace();
 					}
+				}
+			});
+			
+			dialogo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					jahDesistiu = false;
 				}
 			});
 			dialogo.show();
@@ -516,12 +503,12 @@ public class TelaJogoActivity extends Activity{
 		intentOut = new Intent(this, ControllerActivity.class);
 		
 		intentOut.putExtra("botao", "calcularPontosDeVida");
-		intentOut.putExtra("numeroDeJogadores", qtdeJogadores);//quantidade de jogadores (int)
-		intentOut.putStringArrayListExtra("arrayJogadores", listaJogadores);//lista de nomes dos jogadores (String)
-		intentOut.putIntegerArrayListExtra("pontuacaoJogadores", listaPontuacao);//lista de pontuacao (int)
+		intentOut.putExtra("numeroDeJogadores", controle.getQuantidadejogador());//quantidade de jogadores (int)
+		intentOut.putStringArrayListExtra("arrayJogadores", controle.getListaDeJogadores());//lista de nomes dos jogadores (String)
+		intentOut.putIntegerArrayListExtra("pontuacaoJogadores", controle.getListaPontuacao());//lista de pontuacao (int)
 		intentOut.putExtra("jogadorAtual", jogadorAtual);// o jogador atual (int)
-		intentOut.putExtra("pontosRodada", pontosRestantes);// a soma das placas nao abaixadas (int)
-		listaRodadas.set(jogadorAtual, rodada);
+		intentOut.putExtra("pontosRodada", controle.getPontosRestantes());// a soma das placas nao abaixadas (int)
+		listaRodadas.set(jogadorAtual, controle.getPontosRanking());
 		intentOut.putIntegerArrayListExtra("listaRodadas", listaRodadas);//lista das rodadas (int)
 		super.finish();
 		startActivity(intentOut);
@@ -560,8 +547,8 @@ public class TelaJogoActivity extends Activity{
 		try {
 			int somaDasPlacas = Integer.parseInt(campoSomaPlacas.getText().toString());
 			
-			if(somaDasPlacas == pontosRestantes){
-				calculaPontosRestantes();
+			if(somaDasPlacas == controle.getPontosRestantes()){
+				dialogoCalculaPontosRestantes();
 			}else{
 				dialogoErroDeCalculo(null);
 			}
@@ -575,9 +562,56 @@ public class TelaJogoActivity extends Activity{
 		
 		dialogo.setTitle("Erro");
 		if(e == null) dialogo.setMessage("Calculo não está correto.");
-		else          dialogo.setMessage("O campo está vazio.");
+		else          dialogo.setMessage("O campo está vazio ou preenchido errado.");
 		
 		dialogo.setNegativeButton("Ok", null);
+		dialogo.show();
+	}
+	
+	public void dialogoErroDeCalculoRestante(NumberFormatException e){
+		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+		
+		dialogo.setTitle("Erro");
+		if(e == null) dialogo.setMessage("Calculo não está correto.");
+		else          dialogo.setMessage("O campo está vazio ou preenchido errado.");
+		
+		dialogo.setPositiveButton("Ok", new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialogoCalculaPontosRestantes();
+			}
+		});
+		dialogo.show();
+	}
+	
+	public void dialogoCalculaPontosRestantes(){
+		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
+
+		dialogo.setTitle("Subtrair");
+		dialogo.setMessage("Você deve subtrair o valor das placas com seus pontos de vida\n\n" +
+				controle.getListaPontuacao().get(jogadorAtual)+" - "+controle.getPontosRestantes()+" =");
+
+		final EditText inserirNumero = new EditText(this);
+		dialogo.setView(inserirNumero);
+
+		dialogo.setPositiveButton("Calcular", new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				try{
+					int numero = Integer.parseInt(inserirNumero.getText().toString());
+					if(numero != (controle.getListaPontuacao().get(jogadorAtual) -
+							controle.getPontosRestantes())){
+						dialogoErroDeCalculoRestante(null);
+					}else{
+						calculaPontosRestantes();
+					}
+				}catch (NumberFormatException e) {
+					dialogoErroDeCalculoRestante(e);
+				}
+			}
+		});
 		dialogo.show();
 	}
 	
