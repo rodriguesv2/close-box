@@ -334,6 +334,7 @@ public class AbaixarPlacas {
 				primeiraPlaca = false;
 				diferenca = somaDados - placa;
 				placaAnterior = placa;
+				setFlagPlacasAltasTrue(placa);
 			}
 		}else{
 			if(placa==diferenca){
