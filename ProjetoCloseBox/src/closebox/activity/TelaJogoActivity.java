@@ -31,8 +31,6 @@ public class TelaJogoActivity extends Activity{
 	private ImageView dado2;
 	private Runnable runnable1;
 	private Runnable runnable2;
-	private int[]listaDados = {R.drawable.dado_face1,R.drawable.dado_face2,R.drawable.dado_face3,
-			R.drawable.dado_face4,R.drawable.dado_face5,R.drawable.dado_face6};
 	private ImageView placa1;
 	private ImageView placa2; 
 	private ImageView placa3; 
@@ -66,6 +64,13 @@ public class TelaJogoActivity extends Activity{
 	private boolean jahDesistiu = false;
 	private Controle controle;
 	
+	private int[]listaDados = {R.drawable.dado_face1,R.drawable.dado_face2,R.drawable.dado_face3,
+			R.drawable.dado_face4,R.drawable.dado_face5,R.drawable.dado_face6};
+	
+	private int[] arrayImageViewPlaca = {R.id.imageViewPlaca_1,R.id.imageViewPlaca_2,R.id.imageViewPlaca_3,
+			R.id.imageViewPlaca_4,R.id.imageViewPlaca_5,R.id.imageViewPlaca_6,
+			R.id.imageViewPlaca_7,R.id.imageViewPlaca_8,R.id.imageViewPlaca_9};
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -80,6 +85,17 @@ public class TelaJogoActivity extends Activity{
 		mostrarJogadores();
 		dadoLancado1.setVisibility(View.INVISIBLE);
 		dadoLancado2.setVisibility(View.INVISIBLE);
+		embaralharPlaca();
+	}
+	
+	public void embaralharPlaca(){
+		int[] arrayDeImagens = controle.embaralharPlacas();
+		ImageView placa;
+		
+		for(int i = 0; i < 9; i++){
+			placa = (ImageView)findViewById(arrayImageViewPlaca[i]);
+			placa.setImageResource(arrayDeImagens[i]);
+		}
 	}
 	
 	//Mostra apenas as TextViews com conteudo.
@@ -302,7 +318,10 @@ public class TelaJogoActivity extends Activity{
 			placa.setVisibility(View.INVISIBLE);
 			placaDown.setVisibility(View.VISIBLE);
 
-			calculaJogada(controle.getPosicaoDaPlaca(view));
+			int[] ordemDasPlacas = controle.getOrdemDasPlacas();
+			int valorDaPlaca = ordemDasPlacas[(controle.getPosicaoDaPlaca(view)-1)];
+			
+			calculaJogada(valorDaPlaca);
 		}
 	}
 	
@@ -313,7 +332,9 @@ public class TelaJogoActivity extends Activity{
 		controle.gerenciaJogada(placa);
 		
 		if(controle.isLevantarPlacas()){
-			levantar2Placas(placa, controle.getPlacaAnterior());
+			int placa1 = controle.qualEhAPosicaoDaPlaca(placa);
+			int placa2 = controle.qualEhAPosicaoDaPlaca(controle.getPlacaAnterior());
+			levantar2Placas(placa1, placa2, placa, controle.getPlacaAnterior());
 			controle.setLevantarPlacas(false);
 		}
 		if(controle.isGirarDados()){
@@ -343,7 +364,7 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	//Levanta as 2 placas.
-	private void levantar2Placas(int placa, int placaAnterior) {
+	private void levantar2Placas(int placa, int placaAnterior, int placaMensagem1, int placaMensagem2) {
 		levantarPlaca(placa);
 		levantarPlaca(placaAnterior);
 		controle.setDado1Parado(true);
@@ -351,7 +372,7 @@ public class TelaJogoActivity extends Activity{
 		controle.setPrimeiraPlaca(true);
 		controle.setPlacaAnterior(0);
 		
-		mensagemJogadaErrada(placa, placaAnterior);
+		mensagemJogadaErrada(placaMensagem1, placaMensagem2);
 	}
 
 	//Levanta uma placa.
@@ -390,19 +411,16 @@ public class TelaJogoActivity extends Activity{
 		case 7:
 			placa7.setVisibility(View.VISIBLE);
 			placaDown7.setVisibility(View.INVISIBLE);
-			controle.setFlagPlacasAltasFalse(placa);
 			break;
 			
 		case 8:
 			placa8.setVisibility(View.VISIBLE);
 			placaDown8.setVisibility(View.INVISIBLE);
-			controle.setFlagPlacasAltasFalse(placa);
 			break;
 			
 		case 9:
 			placa9.setVisibility(View.VISIBLE);
 			placaDown9.setVisibility(View.INVISIBLE);
-			controle.setFlagPlacasAltasFalse(placa);
 			break;
 
 		default:
@@ -548,7 +566,12 @@ public class TelaJogoActivity extends Activity{
 			int somaDasPlacas = Integer.parseInt(campoSomaPlacas.getText().toString());
 			
 			if(somaDasPlacas == controle.getPontosRestantes()){
-				dialogoCalculaPontosRestantes();
+				if((controle.getListaPontuacao().get(jogadorAtual) - controle.getPontosRestantes())
+						>= 0)					
+					dialogoCalculaPontosRestantes();
+				else
+					calculaPontosRestantes();
+				
 			}else{
 				dialogoErroDeCalculo(null);
 			}
@@ -613,6 +636,11 @@ public class TelaJogoActivity extends Activity{
 			}
 		});
 		dialogo.show();
+	}
+	
+	@Override
+	public void onPause(){
+		super.onStop();
 	}
 	
 	public void gameOver(){

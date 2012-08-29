@@ -3,13 +3,6 @@ package closebox.model;
 import java.util.ArrayList;
 
 import closebox.activity.R;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 
 public class AbaixarPlacas {
@@ -22,7 +15,6 @@ public class AbaixarPlacas {
 	private int placaAnterior;
 	private int qtdePlacas;
 	private int qtdeJogadores;
-	private int jogadorAtual;
 	private int diferenca;
 	private boolean girarDados;
 	private boolean levantarPlacas;
@@ -47,50 +39,98 @@ public class AbaixarPlacas {
 		perguntarSobreDado = false;
 	}
 		
+	/**
+	 * Flag que assinala se pode o dialogo sobre jogar com um dado aparecer.
+	 * @return Se deve aparecer.
+	 */
 	public boolean isPerguntarSobreDado() {
 		return perguntarSobreDado;
 	}
 
+	/**
+	 * Assinala a flag para liberar a pergunta sobre jogar com um dado.
+	 * @param perguntarSobreDado Flag a ser assinalada.
+	 */
 	public void setPerguntarSobreDado(boolean perguntarSobreDado) {
 		this.perguntarSobreDado = perguntarSobreDado;
 	}
 
+	/**
+	 * Flag que libera os pontos de ranking serem mostrados na tela.
+	 * @return Flag.
+	 */
 	public boolean isMostraRanking() {
 		return mostraRanking;
 	}
 
+	/**
+	 * Assinalar se deve ou não mostrar ranking.
+	 * @param mostraRanking Flag a ser assinalada
+	 */
 	public void setMostraRanking(boolean mostraRanking) {
 		this.mostraRanking = mostraRanking;
 	}
 
+	/**
+	 * Acesso ao valor da primeira placa jogada.
+	 * @return Primeira placa jogada.
+	 */
 	public int getPlacaAnterior() {
 		return placaAnterior;
 	}
 
+	/**
+	 * Assinala se deve ou não calcular os pontos restantes
+	 * @return
+	 */
 	public boolean isCalcularPontosRestantes() {
 		return calcularPontosRestantes;
 	}
 
+	/**
+	 * Recebe o objeto JogaDado para manter o controle do mesmo.
+	 * @param jogaDado Classe JogaDado.
+	 */
 	public void setJogaDado(JogaDado jogaDado){
 		this.jogaDado = jogaDado;
 	}
 	
+	/**
+	 * Recebe o objeto Pontos para manter o controle do mesmo.
+	 * @param pontos Classe Pontos.
+	 */
 	public void setPontos(Pontos pontos){
 		this.pontos = pontos;
 	}
 	
+	/**
+	 * Diz se os dado devem girar;
+	 * @return Flag
+	 */
 	public boolean isGirarDados() {
 		return girarDados;
 	}
 	
+	/**
+	 * Assinalar se os dado devem girar;
+	 * @param girarDados Flag
+	 */
 	public void setGirarDados(boolean girarDados){
 		this.girarDados = girarDados;
 	}
 	
+	/**
+	 * Informa se as placas devem levantar mediante a jogada errada.
+	 * @return Flag
+	 */
 	public boolean isLevantarPlacas() {
 		return levantarPlacas;
 	}
 
+	/**
+	 * 
+	 * @param levantarPlacas
+	 */
 	public void setLevantarPlacas(boolean levantarPlacas) {
 		this.levantarPlacas = levantarPlacas;
 	}
@@ -154,7 +194,7 @@ public class AbaixarPlacas {
 			if(i == 0){
 				int sorteio = (int)Math.ceil((Math.random()*9) - 1);
 				novoArrayImagens[i] = arrayImagens[sorteio];
-				ordemDasPlacas[i] = sorteio;
+				ordemDasPlacas[i] = sorteio+1;
 				i++;
 			}else{
 				int j;
@@ -166,7 +206,7 @@ public class AbaixarPlacas {
 				}
 				if(j == i){
 					novoArrayImagens[i] = arrayImagens[sorteio];
-					ordemDasPlacas[i] = sorteio;
+					ordemDasPlacas[i] = sorteio+1;
 					i++;
 				}
 			}
@@ -176,6 +216,15 @@ public class AbaixarPlacas {
 	
 	public int[] getOrdemDasPlacas(){
 		return ordemDasPlacas;
+	}
+	
+	public int qualEhAPosicaoDaPlaca(int valor){
+		int i = 0;
+		for(i = 0; i < 9; i++){
+			if(valor == ordemDasPlacas[i])break;
+		}
+		
+		return i+1;
 	}
 	
 	public int getPosicaoDaPlaca(View view){
@@ -208,17 +257,14 @@ public class AbaixarPlacas {
 			
 		case R.id.imageViewPlaca_7:
 			posicao = 7;
-			placa7abaixada = true;
 			break;
 			
 		case R.id.imageViewPlaca_8:
 			posicao = 8;
-			placa8abaixada = true;
 			break;
 			
 		case R.id.imageViewPlaca_9:
 			posicao = 9;
-			placa9abaixada = true;
 			break;
 
 		default:
@@ -237,7 +283,13 @@ public class AbaixarPlacas {
 	public void setFlagPlacasAltasFalse(int placa){
 		if(placa == 7) 	   placa7abaixada = false;
 		else if(placa == 8)placa8abaixada = false;
-		else			   placa9abaixada = false;
+		else if(placa == 9)placa9abaixada = false;
+	}
+	
+	public void setFlagPlacasAltasTrue(int valor){
+		if(valor == 7)     placa7abaixada = true;
+		else if(valor == 8)placa8abaixada = true;
+		else if(valor == 9)placa9abaixada = true;
 	}
 	
 	public void setQuantidadeJodador(int qtdeJogadores){
@@ -277,6 +329,7 @@ public class AbaixarPlacas {
 				levantarPlacas = false;
 				mostraRanking = true;
 				perguntarSobreDado = true;
+				setFlagPlacasAltasTrue(placa);
 			}else{
 				primeiraPlaca = false;
 				diferenca = somaDados - placa;
@@ -290,8 +343,11 @@ public class AbaixarPlacas {
 				girarDados = true;
 				mostraRanking = true;
 				perguntarSobreDado = true;
+				setFlagPlacasAltasTrue(placa);
 			}else{
 				levantarPlacas = true;
+				setFlagPlacasAltasFalse(placa);
+				setFlagPlacasAltasFalse(placaAnterior);
 			}
 		}
 		if(qtdePlacas == 0){

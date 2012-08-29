@@ -6,11 +6,9 @@ public class Pontos {
 	
 	private int pontosRestantes;
 	private int pontosRanking;
-	private JogaDado jogaDado;
 	private ArrayList<Integer> listaPontuacao;
 	
 	public Pontos(){
-		jogaDado = new JogaDado();
 		pontosRestantes = 45;
 		pontosRanking = 0;
 	}
