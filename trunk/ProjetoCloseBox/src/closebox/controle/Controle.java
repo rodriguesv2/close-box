@@ -3,7 +3,6 @@ package closebox.controle;
 import java.util.ArrayList;
 
 import android.view.View;
-import closebox.activity.R;
 import closebox.model.*;
 
 public class Controle{
@@ -22,6 +21,10 @@ public class Controle{
 	private void incluirJogaDadoEPontosAoAbaixarPlacas(){
 		abaixarPlacas.setJogaDado(jogaDado);
 		abaixarPlacas.setPontos(pontos);
+	}
+	
+	public int qualEhAPosicaoDaPlaca(int valor){
+		return abaixarPlacas.qualEhAPosicaoDaPlaca(valor);
 	}
 	
 	public boolean isPerguntarSobreDado() {
@@ -87,10 +90,6 @@ public class Controle{
 	
 	public void setPrimeiraPlaca(boolean primeiraPlaca){
 		abaixarPlacas.setPrimeiraPlaca(primeiraPlaca);
-	}
-	
-	public void setFlagPlacasAltasFalse(int placa){
-		abaixarPlacas.setFlagPlacasAltasFalse(placa);
 	}
 	
 	public void setValorDado1(int valorDado1){
