@@ -639,8 +639,8 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	@Override
-	public void onPause(){
-		super.onStop();
+	public void onStop(){
+		super.onPause();
 	}
 	
 	public void gameOver(){
