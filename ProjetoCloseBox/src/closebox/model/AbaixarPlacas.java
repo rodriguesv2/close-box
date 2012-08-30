@@ -21,6 +21,7 @@ public class AbaixarPlacas {
 	private boolean calcularPontosRestantes;
 	private boolean mostraRanking;
 	private boolean perguntarSobreDado;
+	private boolean ultimaPlaca;
 	private JogaDado jogaDado;
 	private Pontos pontos;
 	private ArrayList<String> listaJogadores;
@@ -37,6 +38,7 @@ public class AbaixarPlacas {
 		calcularPontosRestantes = false;
 		mostraRanking = false;
 		perguntarSobreDado = false;
+		ultimaPlaca = false;
 	}
 		
 	/**
@@ -316,6 +318,10 @@ public class AbaixarPlacas {
 		this.primeiraPlaca = primeiraPlaca;
 	}
 	
+	public boolean isUltimaPlaca() {
+		return ultimaPlaca;
+	}
+
 	public void gerenciaJogada(int placa){
 		int somaDados;
 		if(!jogaDado.getEhUmDado())somaDados = jogaDado.resultadoDaSoma();
@@ -331,10 +337,13 @@ public class AbaixarPlacas {
 				perguntarSobreDado = true;
 				setFlagPlacasAltasTrue(placa);
 			}else{
-				primeiraPlaca = false;
-				diferenca = somaDados - placa;
-				placaAnterior = placa;
-				setFlagPlacasAltasTrue(placa);
+				if(qtdePlacas != 1){
+					primeiraPlaca = false;
+					diferenca = somaDados - placa;
+					placaAnterior = placa;
+				}else{
+					ultimaPlaca = true;
+				}
 			}
 		}else{
 			if(placa==diferenca){
@@ -345,6 +354,7 @@ public class AbaixarPlacas {
 				mostraRanking = true;
 				perguntarSobreDado = true;
 				setFlagPlacasAltasTrue(placa);
+				setFlagPlacasAltasTrue(placaAnterior);
 			}else{
 				levantarPlacas = true;
 				setFlagPlacasAltasFalse(placa);

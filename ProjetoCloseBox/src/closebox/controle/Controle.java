@@ -30,6 +30,10 @@ public class Controle{
 	public boolean isPerguntarSobreDado() {
 		return abaixarPlacas.isPerguntarSobreDado();
 	}
+	
+	public boolean isUltimaPlaca() {
+		return abaixarPlacas.isUltimaPlaca();
+	}
 
 	public void setPerguntarSobreDado(boolean perguntarSobreDado) {
 		abaixarPlacas.setPerguntarSobreDado(perguntarSobreDado);

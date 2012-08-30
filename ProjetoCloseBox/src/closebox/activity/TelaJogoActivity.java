@@ -354,6 +354,14 @@ public class TelaJogoActivity extends Activity{
 			subirDialogoSobreDados();
 			controle.setPerguntarSobreDado(false);
 		}
+		if(controle.isUltimaPlaca() && !controle.isCalcularPontosRestantes()){
+			mensagemJogadaErrada(placa, 0);
+			levantarPlaca(controle.qualEhAPosicaoDaPlaca(placa));
+			threadDado1();
+			threadDado2();
+			controle.setGirarDados(false);
+			escondeDadoLancado();
+		}
 	}
 	
 	public void girarDados(){
@@ -462,7 +470,11 @@ public class TelaJogoActivity extends Activity{
 	private void mensagemJogadaErrada(int placa1, int placa2){
 		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 		dialogo.setTitle("JOGADA ERRADA");
-		dialogo.setMessage("A soma de "+ placa2 +" e "+ placa1 + " não corresponde á soma dos dados!");
+		
+		if(!controle.isUltimaPlaca())
+			dialogo.setMessage("A soma de "+ placa2 +" e "+ placa1 + " não corresponde á soma dos dados!");
+		else
+			dialogo.setMessage("" + placa1 + " não corresponde á soma dos dados!");
 		
 		dialogo.setPositiveButton("OK", new OnClickListener() {	
 			@Override
