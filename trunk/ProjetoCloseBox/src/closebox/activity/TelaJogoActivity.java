@@ -77,13 +77,13 @@ public class TelaJogoActivity extends Activity{
 			R.id.imageViewPlaca_7,R.id.imageViewPlaca_8,R.id.imageViewPlaca_9};
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState){
+	public void onCreate(Bundle savedInstanceState){ // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tela_jogo);
 		controle = new Controle();
 		
-		threadDado1();
-		threadDado2();
+		threadDado1(); // faz o dado 1 girar
+		threadDado2(); // faz o dado 2 girar
 		handler = new Handler();
 		dadosIntent = getIntent();
 		instanciarObjetos();
@@ -93,6 +93,10 @@ public class TelaJogoActivity extends Activity{
 		embaralharPlaca();
 	}
 	
+	/**
+	 * Responsavel por alterar a posicao das placas, de maneira que elas nao sejam apresentadas
+	 * de forma crescente de 1 a 9, mas sim de forma aleatoria, a cada nova tela (ao trocar de Jogador ou nova rodada).
+	 */
 	public void embaralharPlaca(){
 		int[] arrayDeImagens = controle.embaralharPlacas();
 		ImageView placa;
@@ -103,7 +107,9 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	//Mostra apenas as TextViews com conteudo.
+	/**
+	 * Mostra apenas as TextViews com conteudo, de acordo com a quantidade de jogadores.
+	 */
 	private void mostrarJogadores(){
 		//Recebe dados da activity que a chamou.
 		controle.setQuantidadeJodador(dadosIntent.getIntExtra("numeroDeJogadores",2));
@@ -150,7 +156,9 @@ public class TelaJogoActivity extends Activity{
 		apontaJogador(jogadorAtual);
 	}
 	
-	
+	/**
+	 * Inicializa os objetos, isto é, as imagens visiveis ao Jogador.
+	 */
 	private void instanciarObjetos(){
 		jogador1 = (TextView)findViewById(R.id.jogadorText1);
 		jogador2 = (TextView)findViewById(R.id.jogadorText2);
@@ -186,7 +194,10 @@ public class TelaJogoActivity extends Activity{
 		rodadaAtual = (TextView)findViewById(R.id.rodada);
 	}
 	
-	//Adiciona um # a frente do nome da rodada.
+	/**
+	 * Adiciona um # a frente do nome da rodada.
+	 * @param jogador o indice do Jogador atual
+	 */
 	public void apontaJogador(int jogador){
 		if(jogador == 0){
 			apontador = (TextView)findViewById(R.id.checkedTextView1);
@@ -200,7 +211,10 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	//Faz o dado 1 girar.
+	/**
+	 * Thread responsavel por fazer o efeito do Dado 1.
+	 * Faz o dado 1 girar.
+	 */
 	public void threadDado1() {
 		runnable1 = new Runnable() {
 			int i = 2;
@@ -233,7 +247,10 @@ public class TelaJogoActivity extends Activity{
 		controle.setDado1Parado(false);
 	}
 
-	//Faz o dado 2 girar.
+	/**
+	 * Thread responsavel por fazer o efeito do Dado 2.
+	 * Faz o dado 2 girar.
+	 */
 	public void threadDado2() {
 		// Do something long
 		runnable2 = new Runnable() {
@@ -269,7 +286,9 @@ public class TelaJogoActivity extends Activity{
 	}
 	
 	
-	//Faz com que os dados voltem a posição de jogar.
+	/**
+	 * Faz com que os dados voltem a posição de jogar.
+	 */
 	public void escondeDadoLancado(){
 		if(!controle.getEhUmDado()){
 			dadoLancado1.setVisibility(View.INVISIBLE);
@@ -282,6 +301,12 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
+	/**
+	 * Ao tocar no dado esse metodo é disparado.
+	 * Esconde a imagem do dado girando, faz o sorteio de um numero aleatorio entre 1 e 6 e
+	 * apresenta o dado com a face relativa a esse numero.
+	 * @param view a imagem do dado girando.
+	 */
 	public void acaoDado(View view){
 		ImageView dado = (ImageView)findViewById(view.getId());
 		
@@ -292,27 +317,36 @@ public class TelaJogoActivity extends Activity{
 		else							   sortearDado2();
 	}
 	
-	//Faz com que o numero sorteado corresponda a imagem do dado.
+	/**
+	 * Faz com que o numero sorteado corresponda a imagem do dado.
+	 */
 	public void sortearDado1(){
 		controle.sorteioDado1();
 		dadoLancado1.setImageResource(listaDados[controle.getValorDado1()-1]);
 		dadoLancado1.setVisibility(View.VISIBLE);
 	}
 	
-	//Faz com que o numero sorteado corresponda a imagem do dado.
+	/**
+	 * Faz com que o numero sorteado corresponda a imagem do dado.
+	 */
 	public void sortearDado2(){
 		controle.sorteioDado2();
 		dadoLancado2.setImageResource(listaDados[controle.getValorDado2()-1]);
 		dadoLancado2.setVisibility(View.VISIBLE);
 	}
 	
+	/**
+	 * Esconde o dado 2.
+	 */
 	public void inutilizarDado2(){
 		dado2.setVisibility(View.INVISIBLE);
 	}
 	
 	//-------------------------------------------------------------------------------------------------------------//
 	//caso de uso abaixar placas
-	
+	/**
+	 * Chamado ao pressionar uma das placas do jogo.
+	 */
 	public void abaixarPlaca(View view){
 		if(((controle.getDado1Parado() && controle.getDado2Parado()) 
 				|| (controle.getDado1Parado() && controle.getEhUmDado())) && !calcularPontos){
@@ -330,7 +364,8 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	/*Calcula a soma dos dados e valida a ação levando em conta se uma ou duas
+	/**
+	 * Calcula a soma dos dados e valida a ação levando em conta se uma ou duas
 	 * placas foram abaixadas.
 	 */
 	public void calculaJogada(int placa){
@@ -369,6 +404,9 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
+	/**
+	 * Faz a chamada dos metodos responsaveis pelo efeito dos dados girando.
+	 */
 	public void girarDados(){
 		if(controle.isGirarDados()){
 			threadDado1();
@@ -376,7 +414,13 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	//Levanta as 2 placas.
+	/**
+	 * Chamado quando ha uma jogada errada e se faz necessario levanta as placas que foram abaixadas
+	 * @param placa a ultima placa abaixada
+	 * @param placaAnterior a placa anteriormente abaixada
+	 * @param placaMensagem1 ??
+	 * @param placaMensagem2 ??
+	 */
 	private void levantar2Placas(int placa, int placaAnterior, int placaMensagem1, int placaMensagem2) {
 		levantarPlaca(placa);
 		levantarPlaca(placaAnterior);
@@ -388,7 +432,10 @@ public class TelaJogoActivity extends Activity{
 		mensagemJogadaErrada(placaMensagem1, placaMensagem2);
 	}
 
-	//Levanta uma placa.
+	/**
+	 * Levanta uma placa.
+	 * @param placa a placa a ser levantada.
+	 */
 	private void levantarPlaca(int placa) {
 		switch (placa) {
 		case 1:
@@ -441,7 +488,9 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 		
-	//Verifica se já foi perguntado se deseja jogar com apenas 1 dado.
+	/**
+	 * Verifica se já foi perguntado se deseja jogar com apenas 1 dado.
+	 */
 	public void subirDialogoSobreDados(){
 		if(controle.placasAltasAbaixadas() && !jahFoiPerguntadoSobreDados){
 			determinarQuantidadeDeDados();
@@ -449,7 +498,9 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	//Detemina se deve haver dois dados.
+	/**
+	 * Detemina se deve haver dois dados.
+	 */
 	public void determinarQuantidadeDeDados(){
 		if(controle.placasAltasAbaixadas()){
 			AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
@@ -471,7 +522,11 @@ public class TelaJogoActivity extends Activity{
 		}
 	}
 	
-	//Despara uma mensagem dizendo que a jogada é invalida.
+	/**
+	 * Dispara uma mensagem dizendo que a jogada é invalida.
+	 * @param placa1 placa abaixada 
+	 * @param placa2 placa abaixada
+	 */
 	private void mensagemJogadaErrada(int placa1, int placa2){
 		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 		dialogo.setTitle("JOGADA ERRADA");
@@ -494,7 +549,10 @@ public class TelaJogoActivity extends Activity{
     	dialogo.show();
 	}
 	
-	//Exibe caixa de dialogo para o caso do jogador não conseguir mais jogar.
+	/**
+	 * Exibe caixa de dialogo para o caso do jogador não conseguir mais jogar.
+	 * @param view o proprio botao "desistir"
+	 */
 	public void desistir(View view){
 		if(!jahDesistiu){
 			jahDesistiu = true;
@@ -531,8 +589,10 @@ public class TelaJogoActivity extends Activity{
 			dialogo.show();
 		}
 	}
-	
-	public void calculaPontosRestantes(){//No Sprint apropriado será implementado corretamente.
+	/**
+	 * Coloca os dados em um Intent e os envia ao ControllerActivity para ser tratado.
+	 */
+	public void calculaPontosRestantes(){
 		// inserir ou enviar para o Activity CALCULAR PONTOS DE VIDA
 		
 		intentOut = new Intent(this, ControllerActivity.class);
@@ -548,7 +608,9 @@ public class TelaJogoActivity extends Activity{
 		super.finish();
 		startActivity(intentOut);
 	}
-	
+	/**
+	 * Chamado ao pressionar o botao "voltar" nativo do Android.
+	 */
 	@Override
 	public void onBackPressed(){
 		
@@ -568,6 +630,9 @@ public class TelaJogoActivity extends Activity{
 		dialogo.show();
 	}
 	
+	/**
+	 * Mostra um editText para que seja inserido a soma das placas que nao foram abaixadas.
+	 */
 	public void mostrarCalcularPontos(){
 		campoSomaPlacas.setVisibility(View.VISIBLE);
 		qualSomaDasPlacas.setVisibility(View.VISIBLE);
@@ -578,6 +643,10 @@ public class TelaJogoActivity extends Activity{
 		
 	}
 	
+	/**
+	 * Verifica se o Jogador inseriu os valores corretos na EditText do metodo mostrarCalcularPontos().
+	 * @param view o botao "ok" ao lado da EditText.
+	 */
 	public void validarCalculoDoUsuario(View view){
 		try {
 			int somaDasPlacas = Integer.parseInt(campoSomaPlacas.getText().toString());
@@ -597,6 +666,10 @@ public class TelaJogoActivity extends Activity{
 		}		
 	}
 	
+	/**
+	 * Mensagem exibida ao inserir valores incorretos na EditText do calculo de pontos restantes.
+	 * @param e a Exception do erro
+	 */
 	public void dialogoErroDeCalculo(NumberFormatException e){
 		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 		
@@ -608,6 +681,10 @@ public class TelaJogoActivity extends Activity{
 		dialogo.show();
 	}
 	
+	/**
+	 * Mensagem exibida ao inserir valores incorretos na EditText do calculo de pontos restantes.
+	 * @param e a Exception do erro
+	 */
 	public void dialogoErroDeCalculoRestante(NumberFormatException e){
 		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 		
@@ -625,6 +702,9 @@ public class TelaJogoActivity extends Activity{
 		dialogo.show();
 	}
 	
+	/**
+	* Mensagem exibida para que seja inserido o valor da subtração dos pontos.
+	*/
 	public void dialogoCalculaPontosRestantes(){
 		AlertDialog.Builder dialogo = new AlertDialog.Builder(this);
 
@@ -655,15 +735,4 @@ public class TelaJogoActivity extends Activity{
 		dialogo.show();
 	}
 	
-	@Override
-	public void onStop(){
-		super.onPause();
-	}
-	
-	public void gameOver(){
-    	intentOut = new Intent(this, ControllerActivity.class);
-    	intentOut.putExtra("botao", "gameOver");
-    	super.finish();
-		startActivity(intentOut);
-	}
 }
