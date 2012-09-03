@@ -8,12 +8,12 @@ import android.view.View;
 /**
  * Classe que inicializa as classes especificas: HistoriaActivity, CreditosActivity e ComoJogarActivity 
  * de acordo com o botao tocado pelo jogador
- * @author Reinaldo
+ * @author THE ENDGAMERS
  *
  */
 public class SobreActivity extends Activity{
 	
-	public void onCreate(Bundle savedInstanceState){
+	public void onCreate(Bundle savedInstanceState){ // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sobre_novo);
 	}

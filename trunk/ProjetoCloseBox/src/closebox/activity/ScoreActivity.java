@@ -25,7 +25,7 @@ import android.widget.Toast;
 /**
  * Classe responsavel pela persistencia dos dados do jogo, especificamente o Score, isto é, o Ranking com os jogadores
  * com as melhores pontuações.
- * @author Reinaldo
+ * @author The EndGamers
  *
  */
 public class ScoreActivity extends Activity {
@@ -46,9 +46,9 @@ public class ScoreActivity extends Activity {
 	
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) { // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
-		abreouCriaBanco();
+		abreouCriaBanco(); // cria a conexao com o banco
 		intentIn = getIntent();
 		defineAcaoOrigem();
 	}
@@ -122,8 +122,8 @@ public class ScoreActivity extends Activity {
 			
 			//create table if not exists jogador(_id integer primary key autoincrement, nome text, rodadas integer)
 			String sql = "CREATE TABLE IF NOT EXISTS "+TABELA+
-				"("+ID_TABELA+" INTEGER PRIMARY KEY AUTOINCREMENT, "+CAMPO_NOME+
-				" TEXT, "+CAMPO_RODADAS+" INTEGER);";
+				"("+ ID_TABELA +" INTEGER PRIMARY KEY AUTOINCREMENT, "+ CAMPO_NOME +
+				" TEXT, "+ CAMPO_RODADAS +" INTEGER);";
 			bancoDados.execSQL(sql);
 		} catch (Exception erro) {
 			mensagemExibir("Erro Banco","Erro ao criar ou abrir Banco de Dados: " + erro.getMessage());
@@ -203,7 +203,7 @@ public class ScoreActivity extends Activity {
 	private int numRegistros(){
 		int registros = 10;
 		try {
-			Cursor c = bancoDados.rawQuery("select * from "+TABELA+";", null); //select * from jogador;
+			Cursor c = bancoDados.rawQuery("select * from "+ TABELA +";", null); //select * from jogador;
 			registros = c.getCount(); // obtem a contagem
 			return registros;
 		} catch (Exception e) {
@@ -219,9 +219,9 @@ public class ScoreActivity extends Activity {
 	private int getMenorPonto(){
 		int menor = 0;
 		try { 
-			cursor = bancoDados.rawQuery("select min("+CAMPO_RODADAS+") from jogador;", null); //select min(rodadas) from jogador
+			cursor = bancoDados.rawQuery("select min("+ CAMPO_RODADAS +") from jogador;", null); //select min(rodadas) from jogador
 			cursor.moveToFirst();
-			menor = cursor.getInt(cursor.getColumnIndex("min(+CAMPO_RODADAS+)"));
+			menor = cursor.getInt(cursor.getColumnIndex("min(" + CAMPO_RODADAS + ")" ));
 			return menor;
 		} catch (Exception e) {
 			mensagemExibir("Erro Banco", "Erro buscar dados no banco: " + e.getMessage());

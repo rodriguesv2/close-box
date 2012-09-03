@@ -13,7 +13,7 @@ import closebox.model.*;
 
 /**
  * Classe responsavel por mostrar a tela inicial do jogo e de acordo com o botao tocado pelo jogador, inicializa uma nova Activity
- * @author Reinaldo
+ * @author The EndGamers
  *
  */
 public class MainActivity extends Activity {
@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
     
     
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) { // CONSTRUTOR
         super.onCreate(savedInstanceState);
         //Coloca a tela main a frente.
         setContentView(R.layout.main);

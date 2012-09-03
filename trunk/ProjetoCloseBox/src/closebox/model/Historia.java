@@ -1,5 +1,11 @@
 package closebox.model;
 
+/**
+ * Classe chamada pelo menu "Opcoes" do jogo, item "Mostrar Historia"
+ * Mostra a Historia do Jogo
+ * @author Reinaldo
+ *
+ */
 public class Historia {
 	public static String getHistoria(){
 		

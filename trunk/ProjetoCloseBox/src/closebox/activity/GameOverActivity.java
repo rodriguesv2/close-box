@@ -5,10 +5,10 @@ import android.os.Bundle;
 
 /**
  * Classe responsavel por mostrar a tela "GameOver" ao jogador
- * @author Reinaldo
+ * @author The EndGamers
  *
  */
-public class GameOverActivity extends Activity{
+public class GameOverActivity extends Activity{ // CONSTRUTOR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

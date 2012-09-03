@@ -3,7 +3,11 @@ package closebox.activity;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-
+/**
+ * PROVISORIO
+ * @author 
+ *
+ */
 public class OptionsActivity extends Activity{
 	
 	private TextView credito;

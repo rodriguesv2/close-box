@@ -10,7 +10,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 /**
  * Classe responsavel por mostrar um texto na tela, com as informações dos desenvolvedores e todo os artefatos utilizados no projeto.
- * @author Reinaldo
+ * @author The EndGamers
  *
  */
 public class CreditosActivity extends Activity{

@@ -18,6 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Classe responsavel pelo jogo.
+ * @author THE ENDGAMERS
+ *
+ */
 public class TelaJogoActivity extends Activity{
 	private TextView jogador1;
 	private TextView jogador2;
