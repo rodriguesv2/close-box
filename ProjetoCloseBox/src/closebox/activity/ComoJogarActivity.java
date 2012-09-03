@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 /**
  * Classe que inicia a tela 'Como Jogar' e permite ao jogador aprender, atraves de slides ilustrativos como manipular os objetos do jogo.
- * @author Reinaldo
+ * @author The EndGamers
  *
  */
 public class ComoJogarActivity extends Activity{
@@ -37,7 +37,7 @@ public class ComoJogarActivity extends Activity{
 	}
 	
 	/**
-	 * Metodo que verifica o numero da tela atual (imagem) sendo mostrada na historia,
+	 * Verifica o numero da tela atual (imagem) sendo mostrada na historia,
 	 * de acordo com a tela, mostra ou esconde os botoes 'next' e 'back'.
 	 */
 	private void mostraBotoes(){
@@ -55,7 +55,7 @@ public class ComoJogarActivity extends Activity{
 	}
 	
 	/**
-	 * Metodo que torna o botao 'proximo' (navegacao à direita) sensivel ao toque.
+	 * Torna o botao 'proximo' (navegacao à direita) sensivel ao toque.
 	 * De acordo com a tela atual de navegacao, mostra a proxima imagem da sequencia.
 	 * @param view o proprio botao (ImageView).
 	 */
@@ -70,7 +70,7 @@ public class ComoJogarActivity extends Activity{
 	}
 	
 	/**
-	 * Metodo que torna o botao 'anterior' (navegacao à esquerda) sensivel ao toque.
+	 * Torna o botao 'anterior' (navegacao à esquerda) sensivel ao toque.
 	 * De acordo com a tela atual de navegacao, mostra a proxima imagem da sequencia.
 	 * @param view o propio botao (ImageView).
 	 */
@@ -85,7 +85,7 @@ public class ComoJogarActivity extends Activity{
 	}
 	
 	/**
-	 * Metodo que torna o botao 'cancelar' sensivel ao toque.
+	 * Torna o botao 'cancelar' sensivel ao toque.
 	 *@param view o proprio botao
 	 */
 	public void botaoCancel(View view){

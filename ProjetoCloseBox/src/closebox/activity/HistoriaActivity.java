@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 /**
  * Classe que inicia a tela 'Historia' e permite ao jogador conhecer, atraves de slides ilustrativos como manipular os objetos do jogo.
- * @author Reinaldo
+ * @author The EndGamers
  *
  */
 public class HistoriaActivity extends Activity{

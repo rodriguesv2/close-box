@@ -17,7 +17,7 @@ import closebox.model.Jogador;
 
 /**
  * Classe responsavel pela exibição e pelo preenchimento dos campos relativos ao nome do Jogador
- * @author Reinaldo
+ * @author The EndGamers
  */
 public class InserirNomeActivity extends Activity {
 	private Intent intentDados; // Intent responsavel por receber dados
