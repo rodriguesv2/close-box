@@ -1,8 +1,14 @@
 package closebox.activity;
 
+import closebox.service.MusicaPrincipalService;
+import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,6 +25,51 @@ public class ComoJogarActivity extends Activity{
 	private ImageView bot_cancel; // o botao cancelar
 	private int[] listaImagem = {R.drawable.comojogar1,R.drawable.comojogar2,R.drawable.comojogar3,R.drawable.comojogar4}; // Lista de imagens utilizadas
 	private ImageView imagemAtual; // A imagem sendo exibida ao jogador
+	private boolean mBound = false;
+	private MusicaPrincipalService musicaPrincipalService;
+	//Atributo sobrescrito para conexão com o serviço de musica.
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBound = false;
+			
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocalBinder localBinder = (LocalBinder)service;
+			musicaPrincipalService = localBinder.getService();
+			musicaPrincipalService.playMusic();
+			mBound = true;
+		}
+	};
+	
+	@Override
+	public void onResume(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		if(mBound)
+			musicaPrincipalService.pauseMusic();
+		super.onPause();
+	}
+	
+	@Override
+	public void onStart(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onStart();
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(mBound)
+			unbindService(serviceConnection);
+		super.onDestroy();
+	}
 
 	/**
 	 * Inicializa a Activity e chama o layout apropriado, associado a essa Activity.
@@ -34,6 +85,8 @@ public class ComoJogarActivity extends Activity{
 		//inicia com a primeira imagem da sequencia e com o botao back invisivel.
 		imagemAtual = (ImageView)findViewById(R.id.cj1);
 		bot_back.setVisibility(View.INVISIBLE);
+		
+		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
 	
 	/**

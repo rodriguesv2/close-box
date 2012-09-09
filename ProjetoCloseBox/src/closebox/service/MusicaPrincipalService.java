@@ -34,6 +34,7 @@ public class MusicaPrincipalService extends Service{
     public void onCreate() {  
     		mediaPlayer = MediaPlayer.create(this, R.raw.yoho);
     		mediaPlayer.start();
+    		mediaPlayer.setLooping(true);
     }  
       
     @Override  

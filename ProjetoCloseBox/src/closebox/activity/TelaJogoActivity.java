@@ -2,15 +2,22 @@ package closebox.activity;
 
 import java.util.ArrayList;
 
+import closebox.service.*;
+import closebox.service.MusicaPrincipalService.LocalBinder;
+
 import closebox.controle.*;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +75,8 @@ public class TelaJogoActivity extends Activity{
 	private boolean calcularPontos = false;
 	private boolean jahDesistiu = false;
 	private Controle controle;
+	private boolean mBound = false;
+	private MusicaPrincipalService musicaPrincipalService;
 	
 	private int[]listaDados = {R.drawable.dado_face1,R.drawable.dado_face2,R.drawable.dado_face3,
 			R.drawable.dado_face4,R.drawable.dado_face5,R.drawable.dado_face6};
@@ -76,11 +85,28 @@ public class TelaJogoActivity extends Activity{
 			R.id.imageViewPlaca_4,R.id.imageViewPlaca_5,R.id.imageViewPlaca_6,
 			R.id.imageViewPlaca_7,R.id.imageViewPlaca_8,R.id.imageViewPlaca_9};
 	
+	//Atributo sobrescrito para conexão com o serviço de musica.
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBound = false;
+			
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocalBinder localBinder = (LocalBinder)service;
+			musicaPrincipalService = localBinder.getService();
+			musicaPrincipalService.playMusic();
+			mBound = true;
+		}
+	};
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){ // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tela_jogo);
 		controle = new Controle();
+		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
 		threadDado1(); // faz o dado 1 girar
 		threadDado2(); // faz o dado 2 girar
@@ -91,6 +117,35 @@ public class TelaJogoActivity extends Activity{
 		dadoLancado1.setVisibility(View.INVISIBLE);
 		dadoLancado2.setVisibility(View.INVISIBLE);
 		embaralharPlaca();
+		
+	}
+	
+	@Override
+	public void onResume(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		if(mBound)
+			musicaPrincipalService.pauseMusic();
+		super.onPause();
+	}
+	
+	@Override
+	public void onStart(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onStart();
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(mBound)
+			unbindService(serviceConnection);
+		super.onDestroy();
 	}
 	
 	/**

@@ -66,6 +66,13 @@
             android:name=".NumeroDeJogadoresActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"></activity>
+        <service android:name="closebox.service.MusicaPrincipalService" >
+            <intent-filter >
+                <action android:name="INICIAR_SERVICO" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
          
     </application>
 

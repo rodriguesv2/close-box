@@ -1,15 +1,16 @@
 package closebox.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.ServiceConnection;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import closebox.model.*;
+import closebox.service.MusicaPrincipalService;
+import closebox.service.MusicaPrincipalService.LocalBinder;
 
 /**
  * Classe responsavel por mostrar a tela inicial do jogo e de acordo com o botao tocado pelo jogador, inicializa uma nova Activity
@@ -19,6 +20,59 @@ import closebox.model.*;
 public class MainActivity extends Activity {
     
     private Intent intent;
+    private boolean mBound = false;
+    private MusicaPrincipalService musicaPrincipalService;
+  //Atributo sobrescrito para conexão com o serviço de musica.
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBound = false;
+			
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocalBinder localBinder = (LocalBinder)service;
+			musicaPrincipalService = localBinder.getService();
+			mBound = true;
+		}
+	};
+	
+	@Override
+    public void onCreate(Bundle savedInstanceState) { // CONSTRUTOR
+        super.onCreate(savedInstanceState);
+        //Coloca a tela main a frente.
+        setContentView(R.layout.main);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC); 
+        bindService(new Intent(MainActivity.this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+	
+	@Override
+	public void onResume(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		if(mBound)
+			musicaPrincipalService.pauseMusic();
+		super.onPause();
+	}
+	
+	@Override
+	public void onStart(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onStart();
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(mBound)
+			unbindService(serviceConnection);
+		super.onDestroy();
+	}
     
     public void botaoInicio(View view){
     	intent = new Intent(MainActivity.this, ControllerActivity.class); //determina a nova Activity
@@ -45,14 +99,5 @@ public class MainActivity extends Activity {
     	intent = new Intent(MainActivity.this, ControllerActivity.class); //determina a nova Activity
     	intent.putExtra("botao", "sobre"); // o nome do botao, na verdade uma referencia a ser tratada no controller
     	startActivity(intent); // inicializa a nova Activity, envia os dados ao controller
-    }
-    
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) { // CONSTRUTOR
-        super.onCreate(savedInstanceState);
-        //Coloca a tela main a frente.
-        setContentView(R.layout.main);
-        
     }
 }
