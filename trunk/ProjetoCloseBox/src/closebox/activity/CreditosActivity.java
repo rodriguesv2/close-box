@@ -1,10 +1,16 @@
 package closebox.activity;
 
 import closebox.model.Creditos;
+import closebox.service.MusicaPrincipalService;
+import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -17,8 +23,24 @@ public class CreditosActivity extends Activity{
 	private TextView credito; // TextView responsavel por mostrar o texto "creditos"
 	private Handler handler;
 	private ScrollView scroll;
-	int indice = 0; // usado como indice na rolagem da tela
-	
+	private int indice = 0; // usado como indice na rolagem da tela
+	private boolean mBound = false;
+	private MusicaPrincipalService musicaPrincipalService;
+	//Atributo sobrescrito para conexão com o serviço de musica.
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBound = false;
+			
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocalBinder localBinder = (LocalBinder)service;
+			musicaPrincipalService = localBinder.getService();
+			musicaPrincipalService.playMusic();
+			mBound = true;
+		}
+	};
 	
 	@Override 
 	public void onCreate(Bundle savedInstanceState){
@@ -30,6 +52,36 @@ public class CreditosActivity extends Activity{
 		handler = new Handler();
 		mostraCredito();
 		passarCreditos();
+		
+		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+	}
+	
+	@Override
+	public void onResume(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		if(mBound)
+			musicaPrincipalService.pauseMusic();
+		super.onPause();
+	}
+	
+	@Override
+	public void onStart(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onStart();
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(mBound)
+			unbindService(serviceConnection);
+		super.onDestroy();
 	}
 	
 	/**

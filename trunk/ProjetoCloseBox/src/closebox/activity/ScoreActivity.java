@@ -5,13 +5,18 @@ import java.util.List;
 import closebox.activity.ControllerActivity;
 import closebox.activity.R;
 import closebox.model.Jogador;
+import closebox.service.MusicaPrincipalService;
+import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +48,23 @@ public class ScoreActivity extends Activity {
 	private static final String CAMPO_RODADAS = "rodadas"; //String com o nome do campo rodadas
 	private SQLiteDatabase bancoDados = null; // instancia do banco de dados
 	private Cursor cursor;// cursor usado para manipular os dados provenientes do banco de dados
-	
+	private boolean mBound = false;
+	private MusicaPrincipalService musicaPrincipalService;
+	//Atributo sobrescrito para conexão com o serviço de musica.
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBound = false;
+			
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocalBinder localBinder = (LocalBinder)service;
+			musicaPrincipalService = localBinder.getService();
+			musicaPrincipalService.playMusic();
+			mBound = true;
+		}
+	};
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) { // metodo CONSTRUTOR
@@ -51,6 +72,36 @@ public class ScoreActivity extends Activity {
 		abreouCriaBanco(); // cria a conexao com o banco
 		intentIn = getIntent();
 		defineAcaoOrigem();
+		
+		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+	}
+	
+	@Override
+	public void onResume(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		if(mBound)
+			musicaPrincipalService.pauseMusic();
+		super.onPause();
+	}
+	
+	@Override
+	public void onStart(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onStart();
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(mBound)
+			unbindService(serviceConnection);
+		super.onDestroy();
 	}
 	
 	/**

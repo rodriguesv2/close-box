@@ -3,10 +3,14 @@ package closebox.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +18,8 @@ import android.widget.TextView;
 import java.util.*;
 
 import closebox.model.Jogador;
+import closebox.service.MusicaPrincipalService;
+import closebox.service.MusicaPrincipalService.LocalBinder;
 
 /**
  * Classe responsavel pela exibição e pelo preenchimento dos campos relativos ao nome do Jogador
@@ -32,7 +38,66 @@ public class InserirNomeActivity extends Activity {
 	private ArrayList<Integer> pontosJogador; // lista com pontos de vida dos jogadores
 	private ArrayList<Integer> listaRodadas; // lista com a pontuação (score) dos jogadores
 	private int indice = 0; //variavel usada para determinar a quantidade de campos de acordo com a quantidade de jogadores
+	private boolean mBound = false;
+	private MusicaPrincipalService musicaPrincipalService;
 	
+	//Atributo sobrescrito para conexão com o serviço de musica.
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			mBound = false;
+			
+		}
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LocalBinder localBinder = (LocalBinder)service;
+			musicaPrincipalService = localBinder.getService();
+			musicaPrincipalService.playMusic();
+			mBound = true;
+		}
+	};
+	
+	//Para o Android, essa eh a classe main.
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //Faz uma nova tela entrar na frente.
+        setContentView(R.layout.inserir_nomes);
+        instanciarObjetos();
+        setNovaIntent();
+        setQuantidadeDeCamposDeTextos();
+        
+        bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+	
+    @Override
+	public void onResume(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause(){
+		if(mBound)
+			musicaPrincipalService.pauseMusic();
+		super.onPause();
+	}
+	
+	@Override
+	public void onStart(){
+		if(mBound)
+			musicaPrincipalService.playMusic();
+		super.onStart();
+	}
+	
+	@Override
+	public void onDestroy(){
+		if(mBound)
+			unbindService(serviceConnection);
+		super.onDestroy();
+	}
+    
 	/**
 	 * Metodo chamado ao pressionar o botao "OK"
 	 * Insere a quantidade de jogadores e as listas de nomes, pontos de vida e pontuacao em um Intent e os envia ao Controller
@@ -195,16 +260,5 @@ public class InserirNomeActivity extends Activity {
 			break;
 		}
 	}
-	
-	//Para o Android, essa eh a classe main.
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //Faz uma nova tela entrar na frente.
-        setContentView(R.layout.inserir_nomes);
-        instanciarObjetos();
-        setNovaIntent();
-        setQuantidadeDeCamposDeTextos();
-    }
 }
 
