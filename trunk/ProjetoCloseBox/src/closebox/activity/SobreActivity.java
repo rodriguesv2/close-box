@@ -1,5 +1,6 @@
 package closebox.activity;
 
+import closebox.audio.SoundManager;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
@@ -21,6 +22,7 @@ public class SobreActivity extends Activity{
 	
 	private boolean mBound = false;
 	private MusicaPrincipalService musicaPrincipalService;
+	private SoundManager soundManager;
 	//Atributo sobrescrito para conexão com o serviço de musica.
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
@@ -40,6 +42,7 @@ public class SobreActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){ // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sobre_novo);
+		soundManager = SoundManager.getInstance(this);
 		
 		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -72,19 +75,28 @@ public class SobreActivity extends Activity{
 		super.onDestroy();
 	}
 	
+	@Override
+	public void finish(){
+		//soundManager.cleanup();
+		super.finish();
+	}
+	
 	public void botaoCredito(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		Intent intent = new Intent(this, ControllerActivity.class); //determina a nova Activity
 		intent.putExtra("botao", "botaoCredito"); // o nome do botao, na verdade uma referencia a ser tratada no controller
 		startActivity(intent); // inicializa a nova Activity, envia os dados ao controller
 	}
 	
 	public void botaoHistoria(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		Intent intent = new Intent(this, ControllerActivity.class); //determina a nova Activity
 		intent.putExtra("botao", "botaoHistoria"); // o nome do botao, na verdade uma referencia a ser tratada no controller
 		startActivity(intent); // inicializa a nova Activity, envia os dados ao controller
 	}
 	
 	public void botaoComoJogar(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		Intent intent = new Intent(this, ControllerActivity.class); //determina a nova Activity
 		intent.putExtra("botao", "botaoComoJogar"); // o nome do botao, na verdade uma referencia a ser tratada no controller
 		startActivity(intent); // inicializa a nova Activity, envia os dados ao controller

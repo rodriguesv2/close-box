@@ -3,13 +3,15 @@ package closebox.audio;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import closebox.activity.R;
+
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
 public class SoundManager {  
 	  // Total de sons no pool  
-	  private static final int MAXSTREAMS = 4;  
+	  private static final int MAXSTREAMS = 10;  
 	  // Instância única   
 	  private static SoundManager instance;  
 	    
@@ -21,9 +23,17 @@ public class SoundManager {
 	  private ArrayList<Integer> mSoundPoolMap;  
 	  // Pilha que armazena as transações   
 	  // de execução dos sons  
-	  private Stack<Integer> mSongsTransactions;  
-	    
+	  private Stack<Integer> mSongsTransactions;      
 	  private Context mContext;  
+	  public static final int BOTAO_NAVEGACAO = 0;
+	  public static final int PLACA_ABAIXANDO = 1;
+	  public static final int PLACA_LEVANTANDO = 2;
+	  public static final int PLACAS_ERRADAS = 3;
+	  public static final int CALCULO_ERRADO = 4;
+	  public static final int DADO_GIRANDO = 5;
+	  public static final int DADO_JOGANDO = 6;
+	  public static final int DIALOGO_ERRO = 7;
+	  public static final int ABAIXOU_TODAS_AS_PLACAS = 8;
 	  
 	  // Construtor privado pra implementar o   
 	  // Singleton Design Pattern  
@@ -40,7 +50,12 @@ public class SoundManager {
 	    mAudioManager = (AudioManager)   
 	        mContext.getSystemService(  
 	            Context.AUDIO_SERVICE);  
+	    sonsFixos();
 	  }  
+	  
+	  public void sonsFixos(){
+		  addSound(R.raw.botao_4);
+	  }
 	  
 	  // Método estático para obter a instância única  
 	  public static SoundManager getInstance(Context ct) {  

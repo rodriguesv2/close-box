@@ -1,5 +1,6 @@
 package closebox.activity;
 
+import closebox.audio.SoundManager;
 import closebox.model.Creditos;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
@@ -26,6 +27,7 @@ public class CreditosActivity extends Activity{
 	private int indice = 0; // usado como indice na rolagem da tela
 	private boolean mBound = false;
 	private MusicaPrincipalService musicaPrincipalService;
+	private SoundManager soundManager;
 	//Atributo sobrescrito para conexão com o serviço de musica.
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
@@ -52,6 +54,7 @@ public class CreditosActivity extends Activity{
 		handler = new Handler();
 		mostraCredito();
 		passarCreditos();
+		soundManager = SoundManager.getInstance(this);
 		
 		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -82,6 +85,12 @@ public class CreditosActivity extends Activity{
 		if(mBound)
 			unbindService(serviceConnection);
 		super.onDestroy();
+	}
+	
+	@Override
+	public void finish(){
+		//soundManager.cleanup();
+		super.finish();
 	}
 	
 	/**
@@ -131,6 +140,7 @@ public class CreditosActivity extends Activity{
 	 * @param view o proprio botao voltar
 	 */
 	public void botaoVoltar(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		onBackPressed();
 	}
 }

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import java.util.*;
 
+import closebox.audio.SoundManager;
 import closebox.model.Jogador;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
@@ -40,6 +41,7 @@ public class InserirNomeActivity extends Activity {
 	private int indice = 0; //variavel usada para determinar a quantidade de campos de acordo com a quantidade de jogadores
 	private boolean mBound = false;
 	private MusicaPrincipalService musicaPrincipalService;
+	private SoundManager soundManager;
 	
 	//Atributo sobrescrito para conexão com o serviço de musica.
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -66,6 +68,7 @@ public class InserirNomeActivity extends Activity {
         instanciarObjetos();
         setNovaIntent();
         setQuantidadeDeCamposDeTextos();
+        soundManager = SoundManager.getInstance(this);
         
         bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -97,6 +100,12 @@ public class InserirNomeActivity extends Activity {
 			unbindService(serviceConnection);
 		super.onDestroy();
 	}
+	
+	@Override
+	public void finish(){
+		//soundManager.cleanup();
+		super.finish();
+	}
     
 	/**
 	 * Metodo chamado ao pressionar o botao "OK"
@@ -104,6 +113,7 @@ public class InserirNomeActivity extends Activity {
 	 * @param view o proprio botao "OK"
 	 */
 	public void botaoOk(View view) {
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		// Instancia a intent com a activity destino"
 		intentOut = new Intent(this, ControllerActivity.class);
 
@@ -119,7 +129,7 @@ public class InserirNomeActivity extends Activity {
 			intentOut.putIntegerArrayListExtra("pontuacaoJogadores",pontosJogador);
 			intentOut.putIntegerArrayListExtra("listaRodadas", listaRodadas);
 
-			super.finish();
+			finish();
 			// Vai para nova activity
 			startActivity(intentOut);
 		}
@@ -131,7 +141,8 @@ public class InserirNomeActivity extends Activity {
 	 * @param view o proprio botao "CANCELAR"
 	 */
 	public void botaoCancelar(View view){	
-				onBackPressed();
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
+		onBackPressed();
 	}
 	
 	/**

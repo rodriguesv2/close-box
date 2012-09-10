@@ -1,5 +1,6 @@
 package closebox.activity;
 
+import closebox.audio.SoundManager;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
@@ -20,6 +21,7 @@ public class NumeroDeJogadoresActivity extends Activity{
 	
 	public boolean mBound = false;
 	public MusicaPrincipalService musicaPrincipalService;
+	public SoundManager soundManager;
 	
 	//Atributo sobrescrito para conexão com o serviço de musica.
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -41,6 +43,7 @@ public class NumeroDeJogadoresActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){ // CONSTRUTOR
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.numero_de_jogadores);	
+		soundManager = SoundManager.getInstance(this);
 		
 		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -73,12 +76,19 @@ public class NumeroDeJogadoresActivity extends Activity{
 		super.onDestroy();
 	}
 	
+	@Override
+	public void finish(){
+		//soundManager.cleanup();
+		super.finish();
+	}
+	
 	/**
 	 * Determina a quantidade de jogadores
 	 * @param view o proprio botao selecionado pelo Jogador, que apresenta as imagens '1', '2' ou '3'.
 	 */
 	public void escolherNumero(View view){
 		int numeroDeJogadores = 0;
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		
 		if(view.getId() == R.id.imageView2)		numeroDeJogadores = 1; // caso seja selecionada a imagem 1
 		else if(view.getId() == R.id.imageView3)numeroDeJogadores = 2; // caso seja selecionada a imagem 2
@@ -96,6 +106,7 @@ public class NumeroDeJogadoresActivity extends Activity{
 	 * @param view o proprio botao voltar
 	 */
 	public void voltar(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		onBackPressed();
 	}
 }
