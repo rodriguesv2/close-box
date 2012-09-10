@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import closebox.activity.ControllerActivity;
 import closebox.activity.R;
+import closebox.controle.Controle;
 import closebox.model.Jogador;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
@@ -13,8 +14,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
@@ -38,16 +37,10 @@ public class ScoreActivity extends Activity {
 	private Intent intentIn; //intent responsável por receber as informaçoes necessárias 
 	private Intent intentOut; //intent responsável por enviar as informaçoes necessárias 
 	private String botao = ""; // Srting usada para comparar o botão que chamou essa Activity
-	int numJogadores; // quantidade de jogadores
-	int jogAtual, pontoJog; // o indice do jogador atual e a sua pontuação
+	private int numJogadores; // quantidade de jogadores
+	private int jogAtual, pontoJog; // o indice do jogador atual e a sua pontuação
 	private String nomeJog = ""; //o nome do jogador
-	private static final String NOME_BANCO = "closebox"; //String com o nome do database a ser utilizado
-	private static final String TABELA = "jogador"; //String com o nome da tabela
-	private static final String ID_TABELA = "_id"; //String com o nome do campo _id da tabela
-	private static final String CAMPO_NOME = "nome"; //String com o nome do campo nome da tabela
-	private static final String CAMPO_RODADAS = "rodadas"; //String com o nome do campo rodadas
-	private SQLiteDatabase bancoDados = null; // instancia do banco de dados
-	private Cursor cursor;// cursor usado para manipular os dados provenientes do banco de dados
+	private Controle controle;
 	private boolean mBound = false;
 	private MusicaPrincipalService musicaPrincipalService;
 	//Atributo sobrescrito para conexão com o serviço de musica.
@@ -69,7 +62,6 @@ public class ScoreActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) { // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
-		abreouCriaBanco(); // cria a conexao com o banco
 		intentIn = getIntent();
 		defineAcaoOrigem();
 		
@@ -138,7 +130,6 @@ public class ScoreActivity extends Activity {
 		if(numJogadores<1){//Caso não haja mais Jogadores: GAME OVER
 	    	intentOut = new Intent(this, ControllerActivity.class); //envia os dados ao controller
 	    	intentOut.putExtra("botao", "gameOver");// o nome do botao, na verdade uma referencia a ser tratada no controller
-	    	fechaBanco();
 	    	super.finish();
 			startActivity(intentOut);
 		}else{
@@ -158,37 +149,8 @@ public class ScoreActivity extends Activity {
 			intentOut.putIntegerArrayListExtra("pontuacaoJogadores", listaPontuacao);//lista de pontuacao
 			intentOut.putExtra("jogadorAtual", jogAtual);// o jogador atual
 			intentOut.putIntegerArrayListExtra("listaRodadas", rodadas);
-			fechaBanco();
 			super.finish();
 			startActivity(intentOut);
-		}
-	}
-
-	/**
-	 * Metodo responsavel por abrir a conexao com o Banco de dados
-	 */
-	private void abreouCriaBanco() {
-		try {
-			bancoDados = openOrCreateDatabase(NOME_BANCO, MODE_WORLD_READABLE, null);//abre a conexao com o database passado por parametro
-			
-			//create table if not exists jogador(_id integer primary key autoincrement, nome text, rodadas integer)
-			String sql = "CREATE TABLE IF NOT EXISTS "+TABELA+
-				"("+ ID_TABELA +" INTEGER PRIMARY KEY AUTOINCREMENT, "+ CAMPO_NOME +
-				" TEXT, "+ CAMPO_RODADAS +" INTEGER);";
-			bancoDados.execSQL(sql);
-		} catch (Exception erro) {
-			mensagemExibir("Erro Banco","Erro ao criar ou abrir Banco de Dados: " + erro.getMessage());
-		}
-	}
-
-	/**
-	 * Metodo responsavel por fechar a conexao com o Banco de Dados
-	 */
-	private void fechaBanco() {
-		try {
-			bancoDados.close(); // fecha banco de dados
-		} catch (Exception erro) {
-			mensagemExibir("Erro Banco", "Erro ao fechar o banco: " + erro.getMessage());
 		}
 	}
 
@@ -199,24 +161,10 @@ public class ScoreActivity extends Activity {
 		setContentView(R.layout.score_listview);
 		ListView listView = (ListView) findViewById(R.id.list_view);
 		ArrayList<Jogador> listaJogadores; //lista para receber os dados, se existirem no Banco de Dados
-		Jogador jogador;
 		try {
-			cursor = bancoDados.query(TABELA, new String[] {"nome", "rodadas"}, 
-					null,// selection,
-					null,// selectionArgs,
-					null,// groupBy,
-					null,// having,
-					"rodadas desc",// "order by (nome coluna modo)
-					"10"); // Limite de registros retornados(String)
-			int numeroRegistros = cursor.getCount();//faz a contagem dos registros
-			if (numeroRegistros > 0){
-				 listaJogadores = new ArrayList<Jogador>();
-				   while(cursor.moveToNext()){//enquanto apontar para a proxima (ou primeira) linha do resultado da pesquisa
-					   jogador = new Jogador();
-					   jogador.setNome(cursor.getString(cursor.getColumnIndex("nome")));//grava o nome na instancia do joogador
-					   jogador.setPontosDeVida(Integer.parseInt(cursor.getString(cursor.getColumnIndex("rodadas"))));//grava a pontuacao na instancia do joogador
-					   listaJogadores.add(jogador);//adiciona a instancia de Jogador na lista
-				   }
+			controle = new Controle(this.getApplicationContext());
+			listaJogadores = (ArrayList<Jogador>)controle.obterLista();
+			if (listaJogadores.size() != 0){
 				   //Criação do Adapter e passamos a nossa lista de Jogadores para ele
 			       JogadorAdapter adapter2 = new JogadorAdapter(this, listaJogadores);
 			       listView.setAdapter(adapter2);//passamos o Adapter como parametro para a ListVIEW
@@ -254,9 +202,8 @@ public class ScoreActivity extends Activity {
 	private int numRegistros(){
 		int registros = 10;
 		try {
-			Cursor c = bancoDados.rawQuery("select * from "+ TABELA +";", null); //select * from jogador;
-			registros = c.getCount(); // obtem a contagem
-			return registros;
+			controle = new Controle(this.getApplicationContext());
+			return controle.numRegistrosGravados();
 		} catch (Exception e) {
 			mensagemExibir("Erro Banco", "Erro buscar dados no banco: " + e.getMessage());
 			return registros;
@@ -269,11 +216,9 @@ public class ScoreActivity extends Activity {
 	 */
 	private int getMenorPonto(){
 		int menor = 0;
-		try { 
-			cursor = bancoDados.rawQuery("select min("+ CAMPO_RODADAS +") from jogador;", null); //select min(rodadas) from jogador
-			cursor.moveToFirst();
-			menor = cursor.getInt(cursor.getColumnIndex("min(" + CAMPO_RODADAS + ")" ));
-			return menor;
+		try {
+			controle = new Controle(this.getApplicationContext());
+			return controle.menorPontuacaoGravada();
 		} catch (Exception e) {
 			mensagemExibir("Erro Banco", "Erro buscar dados no banco: " + e.getMessage());
 			return menor;
@@ -286,9 +231,8 @@ public class ScoreActivity extends Activity {
 	 */
 	private void gravarJogador(String valorNome, int valorPontos){
 		try {
-			   String sql="INSERT INTO "+TABELA+" ("+CAMPO_NOME+", "+CAMPO_RODADAS+") " //insert into jogador(nome, rodadas) values('valor', valor);
-			   		+ "values ('"+valorNome+"', "+valorPontos+")";		   
-			   bancoDados.execSQL(sql);			   		   
+			controle = new Controle(this.getApplicationContext());   
+			controle.insereNoBanco(valorNome, valorPontos);			   		   
 		   }
 		   catch(Exception erro) {
 			   mensagemExibir("Erro Banco", "Erro ao gravar dados no banco: "+erro.getMessage());
@@ -299,27 +243,27 @@ public class ScoreActivity extends Activity {
 	/**
 	 * Metodo que busca o valor mais baixo do campo rodadas(integer) e o apaga caso haja mais de dez registros no banco de dados. 
 	 */
-	private void apagarUltimo(){
-		if(numRegistros()>10){//atende a condição de só apagar caso haja mais de dez registros no banco de dados.
-			try {
-				int menorValor; //variavel que será usada para armazenar o retorno da busca
+	private void apagarUltimo() {
+		
+		try {
+			controle = new Controle(this.getApplicationContext());
+			if (controle.numRegistrosGravados() > 10) {// atende a condição de só apagar caso haja mais de dez registros
+														// no banco de dados.
+				int menorValor; // variavel que será usada para armazenar o retorno da busca
 				/**
-				 * Essa query busca o id da linha que tem o menor valor no campo rodada,
-				 *  que foi adicionado mais recente, ou seja se dois jogadores com a mesma pontuacao forem encontrados
-				 *   a busca retornara o que foi armazenado por ultimo. (MAIOR ID)
+				 * Essa query busca o id da linha que tem o menor valor no campo
+				 * rodada, que foi adicionado mais recente, ou seja se dois
+				 * jogadores com a mesma pontuacao forem encontrados a busca
+				 * retornara o que foi armazenado por ultimo. (MAIOR ID)
 				 */
-				String sql = ID_TABELA+" = (select max("+ID_TABELA+") from "+TABELA+
-				"where "+CAMPO_RODADAS+" = (select min("+CAMPO_RODADAS+") from "+TABELA+"));";
-				
-				cursor = bancoDados.query(TABELA, new String[] { ID_TABELA, CAMPO_NOME }, 
-						sql, null, null, null, null);
-				cursor.moveToFirst();
-				menorValor = cursor.getInt(cursor.getColumnIndex(ID_TABELA));
-				bancoDados.execSQL("delete from "+TABELA+" where "+ID_TABELA+" = "+menorValor+";");
-			} catch (Exception erro) {
-				mensagemExibir("Erro Banco", "Erro buscar dados no banco: " +erro.getMessage());
+				menorValor = controle.menorPontuacaoGravada();
+				controle.apagarMaisQueDez();
 			}
+		} catch (Exception erro) {
+			mensagemExibir("Erro Banco",
+					"Erro buscar dados no banco: " + erro.getMessage());
 		}
+
 	}
 	
 	/**
