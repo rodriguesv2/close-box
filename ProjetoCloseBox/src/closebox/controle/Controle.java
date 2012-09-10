@@ -1,7 +1,7 @@
 package closebox.controle;
 
 import java.util.ArrayList;
-
+import android.content.Context;
 import android.view.View;
 import closebox.model.*;
 
@@ -10,12 +10,24 @@ public class Controle{
 	private AbaixarPlacas abaixarPlacas;
 	private JogaDado jogaDado;
 	private Pontos pontos;
+	private Score score;
+	private Context context;
 	
 	public Controle(){
 		abaixarPlacas = new AbaixarPlacas();
 		jogaDado = new JogaDado();
 		pontos = new Pontos();
 		incluirJogaDadoEPontosAoAbaixarPlacas();
+	}
+	/**
+	 * Chamado nos casos em que e necessario passar um Context como parametro, 
+	 * como no caso do banco de dados SQLite.
+	 * @param context a Activity que chama o metodo.
+	 * @throws Exception Possiveis erros relacionados ao banco de dados
+	 */
+	public Controle(Context context)throws Exception{
+		this.context = context;
+		score = new Score(this.context);
 	}
 	
 	private void incluirJogaDadoEPontosAoAbaixarPlacas(){
@@ -215,4 +227,58 @@ public class Controle{
 	public void setListaPontuacao(ArrayList<Integer> listaPontuacao) {
 		pontos.setListaPontuacao(listaPontuacao);
 	}
+	//---------------------------------------------------------------------------------------------------------------------
+	//metodos SCORE
+	/**
+	 * Chama o metodo da classe model.Score que insere o registro no banco de dados.
+	 */
+	public void insereNoBanco(String nome, int pontos) throws Exception{
+		Jogador jogador = new Jogador(nome, pontos);
+		score.insere(jogador);
+	}
+	
+	/**
+	 * Chama o metodo da classe model.Score que apaga um registro no banco de dados.
+	 * @param chave um numero inteiro, a primary key do registro que se quer apagar.
+	 * @throws Exception possiveis erros ao tentar apagar.
+	 */
+	public void apagarScore(int chave) throws Exception{
+		score.apagarJogador(chave);
+	}
+	
+	/**
+	 * Chama o metodo da classe model.Score que mantem o banco de dados com no maximo 10 registros.
+	 * @throws Exception possiveis erros ao tentar apagar.
+	 */
+	public void apagarMaisQueDez() throws Exception{
+		score.apagarMaisQueDez();
+	}
+	
+	/**
+	 * Chama o metodo da classe model.Score que pesquisa os registros do banco de dados e retorna uma lista.
+	 * @return um ArrayList, a lista de Jogadores armazenados no banco, em ordem decrescente.
+	 * @throws Exception possiveis erros ao buscar os dados.
+	 */
+	public ArrayList<Jogador> obterLista() throws Exception{
+		return score.obterList();
+	}
+	
+	/**
+	 * Chama o metodo da classe model.Score que busca a menor pontuacao armazenada no banco.
+	 * @return um numero inteiro, a menor pontuacao armazenada no banco.
+	 * @throws Exception possiveis erros ao buscar dados no banco.
+	 */
+	public int menorPontuacaoGravada() throws Exception{
+		return score.menorRegistro();
+	}
+	
+	/**
+	 * Chama o metodo da classe model.Score que busca a quantidade de registros armazenados no banco.
+	 * @return um num inteiro, a quantidade de registros armazenados no banco.
+	 * @throws Exception possiveis erros ao buscar dados no banco.
+	 */
+	public int numRegistrosGravados() throws Exception{
+		return score.numRegistros();
+	}
+	
 }

@@ -105,7 +105,12 @@ public class TelaJogoActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){ // metodo CONSTRUTOR
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tela_jogo);
-		controle = new Controle();
+		try {
+			controle = new Controle();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
 		threadDado1(); // faz o dado 1 girar
