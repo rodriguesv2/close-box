@@ -1,5 +1,6 @@
 package closebox.activity;
 
+import closebox.audio.SoundManager;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
@@ -27,6 +28,7 @@ public class ComoJogarActivity extends Activity{
 	private ImageView imagemAtual; // A imagem sendo exibida ao jogador
 	private boolean mBound = false;
 	private MusicaPrincipalService musicaPrincipalService;
+	private SoundManager soundManager;
 	//Atributo sobrescrito para conexão com o serviço de musica.
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
@@ -70,6 +72,12 @@ public class ComoJogarActivity extends Activity{
 			unbindService(serviceConnection);
 		super.onDestroy();
 	}
+	
+	@Override
+	public void finish(){
+		//soundManager.cleanup();
+		super.finish();
+	}
 
 	/**
 	 * Inicializa a Activity e chama o layout apropriado, associado a essa Activity.
@@ -85,6 +93,7 @@ public class ComoJogarActivity extends Activity{
 		//inicia com a primeira imagem da sequencia e com o botao back invisivel.
 		imagemAtual = (ImageView)findViewById(R.id.cj1);
 		bot_back.setVisibility(View.INVISIBLE);
+		soundManager = SoundManager.getInstance(this);
 		
 		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -113,6 +122,7 @@ public class ComoJogarActivity extends Activity{
 	 * @param view o proprio botao (ImageView).
 	 */
 	public void botaoNext(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		tela++;
 		if(tela<listaImagem.length){
 			imagemAtual.setImageResource(listaImagem[tela]); 
@@ -128,6 +138,7 @@ public class ComoJogarActivity extends Activity{
 	 * @param view o propio botao (ImageView).
 	 */
 	public void botaoBack(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		tela--;
 		if(tela>=0){
 			imagemAtual.setImageResource(listaImagem[tela]); 
@@ -142,6 +153,7 @@ public class ComoJogarActivity extends Activity{
 	 *@param view o proprio botao
 	 */
 	public void botaoCancel(View view){
+		soundManager.playSound(SoundManager.BOTAO_NAVEGACAO);
 		onBackPressed();
 	}
 	

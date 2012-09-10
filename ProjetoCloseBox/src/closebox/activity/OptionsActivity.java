@@ -15,21 +15,7 @@ public class OptionsActivity extends Activity{
 	@Override 
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.costrucao);
-		
-		credito = (TextView)findViewById(R.id.textConstrucao);
-		
-		mostraCredito();
+		setContentView(R.layout.opcoes);
 		
 	}
-	
-	public void mostraCredito(){
-		credito.setText("EM CONSTRUCAO");
-	}
-	
-	
-	
-	
-	
-	
 }
