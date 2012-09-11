@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public void finish(){
-		soundManager.cleanup();
+		//soundManager.cleanup();
 		super.finish();
 	}
     

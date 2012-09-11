@@ -1,6 +1,7 @@
 package closebox.service;
 
 import closebox.activity.R;
+import closebox.controle.Controle;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -11,6 +12,7 @@ public class MusicaPrincipalService extends Service{
 	
 	private MediaPlayer mediaPlayer;
     private IBinder myBinder = new LocalBinder();
+    private Controle controle;
     
     public class LocalBinder extends Binder {
         public MusicaPrincipalService getService() {
@@ -19,22 +21,31 @@ public class MusicaPrincipalService extends Service{
     }
     
     public void pauseMusic(){
-    	mediaPlayer.pause();
+    	if(mediaPlayer.isPlaying())
+    		mediaPlayer.pause();
     }
     
     public void playMusic(){
-    	mediaPlayer.start();
+    	if(controle.getMusica())
+    		mediaPlayer.start();
     }
     
     @Override  
     public IBinder onBind(Intent i) {
         return myBinder;  
     }  
+    
     @Override  
     public void onCreate() {  
-    		mediaPlayer = MediaPlayer.create(this, R.raw.yoho);
+    	try {
+			controle = new Controle(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	mediaPlayer = MediaPlayer.create(this, R.raw.yoho);
+    	if(controle.getMusica())
     		mediaPlayer.start();
-    		mediaPlayer.setLooping(true);
+    	mediaPlayer.setLooping(true);
     }  
       
     @Override  

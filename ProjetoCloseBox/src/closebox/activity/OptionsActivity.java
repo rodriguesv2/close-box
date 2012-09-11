@@ -1,5 +1,6 @@
 package closebox.activity;
 
+import closebox.controle.Controle;
 import closebox.service.MusicaPrincipalService;
 import closebox.service.MusicaPrincipalService.LocalBinder;
 import android.app.Activity;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 /**
@@ -18,11 +20,9 @@ import android.widget.TextView;
  */
 public class OptionsActivity extends Activity{
 	
-	private TextView credito;
 	private CheckBox musicaCheck;
 	private CheckBox somCheck;
-	private boolean booleanMusicaCheck;
-	private boolean booleanSomCheck;
+	private Controle controle;
 	private boolean mBound = false;
 	private MusicaPrincipalService musicaPrincipalService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -44,9 +44,17 @@ public class OptionsActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.opcoes);
+		try {
+			controle = new Controle(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		musicaCheck = (CheckBox)findViewById(R.id.checkMusica);
 		somCheck = (CheckBox)findViewById(R.id.checkSom);
+		
+		musicaCheck.setChecked(controle.getMusica());
+		somCheck.setChecked(controle.getEfeitos());
 		
 		bindService(new Intent(this, MusicaPrincipalService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -79,4 +87,11 @@ public class OptionsActivity extends Activity{
 		super.onDestroy();
 	}
 	
+	public void acao(View view){
+	    controle.alterarOpcoes(musicaCheck.isChecked(), somCheck.isChecked());
+	}
+	
+	public void voltar(View view){
+		super.onBackPressed();
+	}
 }
