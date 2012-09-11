@@ -11,6 +11,7 @@ public class Controle{
 	private JogaDado jogaDado;
 	private Pontos pontos;
 	private Score score;
+	private Opcoes opcoes;
 	private Context context;
 	
 	public Controle(){
@@ -19,16 +20,7 @@ public class Controle{
 		pontos = new Pontos();
 		incluirJogaDadoEPontosAoAbaixarPlacas();
 	}
-	/**
-	 * Chamado nos casos em que e necessario passar um Context como parametro, 
-	 * como no caso do banco de dados SQLite.
-	 * @param context a Activity que chama o metodo.
-	 * @throws Exception Possiveis erros relacionados ao banco de dados
-	 */
-	public Controle(Context context)throws Exception{
-		this.context = context;
-		score = new Score(this.context);
-	}
+	
 	
 	private void incluirJogaDadoEPontosAoAbaixarPlacas(){
 		abaixarPlacas.setJogaDado(jogaDado);
@@ -230,6 +222,18 @@ public class Controle{
 	//---------------------------------------------------------------------------------------------------------------------
 	//metodos SCORE
 	/**
+	 * Chamado nos casos em que e necessario passar um Context como parametro, 
+	 * como no caso do banco de dados SQLite.
+	 * @param context a Activity que chama o metodo.
+	 * @throws Exception Possiveis erros relacionados ao banco de dados
+	 */
+	public Controle(Context context)throws Exception{
+		this.context = context;
+		score = new Score(this.context);
+		opcoes = new Opcoes(context);
+	}
+	
+	/**
 	 * Chama o metodo da classe model.Score que insere o registro no banco de dados.
 	 */
 	public void insereNoBanco(String nome, int pontos) throws Exception{
@@ -279,6 +283,36 @@ public class Controle{
 	 */
 	public int numRegistrosGravados() throws Exception{
 		return score.numRegistros();
+	}
+	//-----------------------------------------------------------------------------------------------------------
+	//metodos OPCOES
+	
+	/**
+	 * Chama o metodo da classe model.Opcoes que faz a alteracao da opcoes do jogo.
+	 * @param musica a flag que sera alterada no banco de dados no campo "SOUND"; 1 = true, 0 = false.
+	 * @param efeito a flag que sera alterada no banco de dados no campo "FX"; 1 = true, 0 = false.
+	 */
+	public void alterarOpcoes(boolean musica, boolean efeito){
+		opcoes = new Opcoes(context);
+		opcoes.alterar(musica, efeito);
+	}
+	
+	/**
+	 * Faz a chamada do metodo da classe model.Opcoes que busca a flag no banco de dados.
+	 * @return true caso a flag armazenada for 1 ou false caso seja 0.
+	 */
+	public boolean getMusica(){
+		opcoes = new Opcoes(context);
+		return opcoes.getMusica();
+	}
+	
+	/**
+	 * Faz a chamada do metodo da classe model.Opcoes que busca a flag no banco de dados.
+	 * @return true caso a flag armazenada for 1 ou false caso seja 0.
+	 */
+	public boolean getEfeitos(){
+		opcoes = new Opcoes(context);
+		return opcoes.getEfeitos();
 	}
 	
 }
