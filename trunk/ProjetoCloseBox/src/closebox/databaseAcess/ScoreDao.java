@@ -29,6 +29,7 @@ public class ScoreDao extends SQLiteOpenHelper{
 	 */
 	public ScoreDao(Context context){
 		super(context, NOME_BANCO, null, 1);
+		onCreate(this.getReadableDatabase());
 	}
 
 	/**
