@@ -29,9 +29,10 @@ public class OptionsDao extends SQLiteOpenHelper{
 	 */
 	public OptionsDao(Context context){
 		super(context, NOME_BANCO, null, 1);
+
 		onCreate(this.getWritableDatabase());
 		//bancoDados = getWritableDatabase();
-	}
+}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -129,6 +130,7 @@ public class OptionsDao extends SQLiteOpenHelper{
 	 * Remove a tabela do banco de dados.
 	 */
 	public void apagarTabela(){
+		bancoDados = getWritableDatabase();
 		bancoDados.execSQL("DROP TABLE IF EXISTS " + TABELA + ";");
 		bancoDados.close();
 	}
