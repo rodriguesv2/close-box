@@ -19,7 +19,6 @@ public class Opcoes {
 	 * @param context O context que chamou esse metodo, como uma Activity por exemplo.
 	 */
 	public Opcoes(Context context){
-		this.context = context;
 		dao = new OptionsDao(context);
 		musica = getMusica();
 		efeitos = getEfeitos();
