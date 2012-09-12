@@ -12,7 +12,6 @@ public class Controle{
 	private Pontos pontos;
 	private Score score;
 	private Opcoes opcoes;
-	private Context context;
 	
 	public Controle(){
 		abaixarPlacas = new AbaixarPlacas();
