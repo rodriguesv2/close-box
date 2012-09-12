@@ -19,8 +19,7 @@ public class Score {
 	 * @throws Exception possiveis erros de conexao.
 	 */
 	public Score(Context context) throws Exception{
-		this.context = context;
-		dao = new ScoreDao(this.context);
+		dao = new ScoreDao(context);
 	}
 	
 	/**
