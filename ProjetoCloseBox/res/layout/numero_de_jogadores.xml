@@ -1,8 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" >
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" >
+            
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
@@ -11,44 +29,57 @@
         android:layout_y="50dp"
         android:src="@drawable/escolher_numero" />
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <FrameLayout
+        android:id="@+id/frameLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="47dp"
-        android:layout_y="130dp"
-        android:src="@drawable/a1" 
-        android:clickable="true"
-        android:onClick="escolherNumero"/>
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="202dp"
-        android:layout_y="130dp"
-        android:src="@drawable/a2" 
-        android:clickable="true"
-        android:onClick="escolherNumero"/>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/imageView1" >
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="351dp"
-        android:layout_y="130dp"
-        android:src="@drawable/a3" 
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:clickable="true"
-        android:onClick="escolherNumero"/>
+        android:onClick="escolherNumero"
+        android:src="@drawable/escolher_nome3" />
 
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="160dp"
-        android:layout_y="260dp"
-        android:src="@drawable/bot_back" 
+        android:layout_above="@+id/frameLayout1"
+        android:layout_toLeftOf="@+id/imageView4"
         android:clickable="true"
-        android:onClick="voltar"/>
+        android:onClick="voltar"
+        android:src="@drawable/boot_back_escolher_jogadores" />
 
-</AbsoluteLayout>
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:clickable="true"
+        android:onClick="escolherNumero"
+        android:src="@drawable/escolher_nome1" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageView2"
+        android:clickable="true"
+        android:onClick="escolherNumero"
+        android:src="@drawable/escolher_nome2" />
+
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
